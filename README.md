@@ -10,5 +10,5 @@ Store these in the data folder
 
 Run plot_stock.py and save all the charts into a local folder named images.
 
-A sample chart of HDFC Bank is as follows:
-<img width="640" height="480" alt="HDFCBANK_chart" src="https://github.com/user-attachments/assets/c0ed365c-20b5-45d8-a252-d8f70186cf2a" />
+A sample chart of INFY is as follows:
+<img width="1366" height="655" alt="INFY_chart" src="https://github.com/user-attachments/assets/25215e19-76d5-468e-8f9b-fcf067f35033" />
