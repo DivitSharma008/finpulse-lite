@@ -12,3 +12,5 @@ Run plot_stock.py and save all the charts into a local folder named images.
 
 A sample chart of INFY is as follows:
 <img width="1366" height="655" alt="INFY_chart" src="https://github.com/user-attachments/assets/25215e19-76d5-468e-8f9b-fcf067f35033" />
+
+I am using the SMA Crossover Strategy to determine when to buy or sell a stock
