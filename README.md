@@ -16,3 +16,6 @@ A sample chart of INFY is as follows:
 I am using the SMA Crossover Strategy to determine when to buy or sell a stock.
 The brokerage costs have been included into determining the total portfolio value which around 0.1% OF EACH TRADE.
 By plotting the equity curve of Reliance I realised that 'Buy & Hold' strategy is better than the SMA strategy.
+The equity curve of Reliance is as follows:
+<img width="640" height="480" alt="RELIANCE_backtest" src="https://github.com/user-attachments/assets/e8e7bc2b-6214-4534-9065-eaaa15378bd4" />
+
