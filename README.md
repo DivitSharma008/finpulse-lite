@@ -13,4 +13,6 @@ Run plot_stock.py and save all the charts into a local folder named images.
 A sample chart of INFY is as follows:
 <img width="1366" height="655" alt="INFY_chart" src="https://github.com/user-attachments/assets/25215e19-76d5-468e-8f9b-fcf067f35033" />
 
-I am using the SMA Crossover Strategy to determine when to buy or sell a stock
+I am using the SMA Crossover Strategy to determine when to buy or sell a stock.
+The brokerage costs have been included into determining the total portfolio value which around 0.1% OF EACH TRADE.
+By plotting the equity curve of Reliance I realised that 'Buy & Hold' strategy is better than the SMA strategy.
