@@ -1,0 +1,2 @@
+I made a equity curve for Reliance which plots the adjusted portfolio accounting for the transcation costs.
+Using this we can see that the buy and hold strategy gives better returns than the SMA Crossover strategy.
