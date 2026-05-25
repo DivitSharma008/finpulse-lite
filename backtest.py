@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import date,timedelta
+from strategy_sma import signals
 
 def run_backtest(df,signals,initial_capital=100000):
 
@@ -49,12 +50,6 @@ def run_backtest(df,signals,initial_capital=100000):
 reliance = pd.read_csv("C:\\Users\\DELL\\OneDrive\\Desktop\\finpulse-lite\\data\\RELIANCE.csv")
 reliance["Date"] = pd.to_datetime(reliance["Date"])
 reliance = reliance.set_index("Date")
-fiftydayMA = reliance["Close"].rolling(window=50).mean()
-twohundreddayMA = reliance["Close"].rolling(window=200).mean()
-signals = pd.Series(data=0,index=reliance.index)
-signals.loc[fiftydayMA > twohundreddayMA] = 1
-signals.loc[fiftydayMA < twohundreddayMA] = -1
-signals = signals.shift(1).fillna(0)
 backtest = run_backtest(reliance,signals,100000)
 final_portfolio = backtest["Portfolio"].iloc[-1]
 adjusted_final_portfolio = backtest["Adjusted Portfolio"].iloc[-1]
