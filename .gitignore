@@ -1,5 +1,8 @@
 # Created by venv; see https://docs.python.org/3/library/venv.html
-
+_pycache_/
+*.pyc
 venv/
+.env
+.vscode
 data/
 images/
