@@ -34,7 +34,7 @@ def run_backtest(df,signals,initial_capital=100000):
         # SELL
         elif signal == -1 and shares > 0:
             cash = shares*price
-            adjusted_cash = shares * price - 0.001*shares*price
+            adjusted_cash = adjusted_shares * price - 0.001*shares*price
             shares = 0.0
             adjusted_shares = 0.0
             df.iloc[i, df.columns.get_loc("Action")] = "SELL THE SHARES AT CLOSE PRICE"
@@ -60,7 +60,7 @@ final_portfolio = backtest["Portfolio"].iloc[-1]
 adjusted_final_portfolio = backtest["Adjusted Portfolio"].iloc[-1]
 print(f"Final Portfolio Value: ₹{final_portfolio:,.2f}")
 print(f"Adjusted Final Portfolio Value: ₹{adjusted_final_portfolio:,.2f}")
-print(f"The difference is ₹{final_portfolio-adjusted_final_portfolio:,.2f}")
+# print(f"The difference is ₹{final_portfolio-adjusted_final_portfolio:,.2f}")
 
 shares = 100000/reliance["Close"].loc[reliance.index[reliance.index >= reliance.index[-1] - pd.DateOffset(years=5)][0]]
 reliance["Buy & Hold"] = reliance["Close"]*shares
