@@ -53,22 +53,23 @@ reliance = reliance.set_index("Date")
 backtest = run_backtest(reliance,signals,100000)
 final_portfolio = backtest["Portfolio"].iloc[-1]
 adjusted_final_portfolio = backtest["Adjusted Portfolio"].iloc[-1]
-print(f"Final Portfolio Value: ₹{final_portfolio:,.2f}")
-print(f"Adjusted Final Portfolio Value: ₹{adjusted_final_portfolio:,.2f}")
-# print(f"The difference is ₹{final_portfolio-adjusted_final_portfolio:,.2f}")
+if __name__=="_backtest_":
+    print(f"Final Portfolio Value: ₹{final_portfolio:,.2f}")
+    print(f"Adjusted Final Portfolio Value: ₹{adjusted_final_portfolio:,.2f}")
+    # print(f"The difference is ₹{final_portfolio-adjusted_final_portfolio:,.2f}")
 
-shares = 100000/reliance["Close"].loc[reliance.index[reliance.index >= reliance.index[-1] - pd.DateOffset(years=5)][0]]
-reliance["Buy & Hold"] = reliance["Close"]*shares
-fig,ax1 = plt.subplots()
-ax1.plot(backtest.index,backtest["Adjusted Portfolio"],color="b")
-ax1.set_xlabel("Date",color="k")
-ax1.set_ylabel("Adjusted Portfolio",color="b")
-ax1.tick_params(axis="y",labelcolor="b")
-ax1.set_title("Reliance Equity Curve",color="green")
-ax2 = ax1.twinx()
-ax2.plot(reliance.index,reliance["Buy & Hold"],color="r")
-ax2.set_ylabel("Buy & Hold",color="r")
-ax2.tick_params(axis="y",labelcolor="r")
-fig.tight_layout()
-fig.savefig("C:\\Users\DELL\OneDrive\Desktop\\finpulse-lite\images\RELIANCE_backtest.png")
-plt.show()
+    shares = 100000/reliance["Close"].loc[reliance.index[reliance.index >= reliance.index[-1] - pd.DateOffset(years=5)][0]]
+    reliance["Buy & Hold"] = reliance["Close"]*shares
+    fig,ax1 = plt.subplots()
+    ax1.plot(backtest.index,backtest["Adjusted Portfolio"],color="b")
+    ax1.set_xlabel("Date",color="k")
+    ax1.set_ylabel("Adjusted Portfolio",color="b")
+    ax1.tick_params(axis="y",labelcolor="b")
+    ax1.set_title("Reliance Equity Curve",color="green")
+    ax2 = ax1.twinx()
+    ax2.plot(reliance.index,reliance["Buy & Hold"],color="r")
+    ax2.set_ylabel("Buy & Hold",color="r")
+    ax2.tick_params(axis="y",labelcolor="r")
+    fig.tight_layout()
+    fig.savefig("C:\\Users\DELL\OneDrive\Desktop\\finpulse-lite\images\RELIANCE_backtest.png")
+    plt.show()
