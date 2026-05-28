@@ -20,7 +20,7 @@ def max_drawdown(equity_curve):
     maxtillnow = equity_curve.cummax()
     drawdown = equity_curve/maxtillnow-1
     maxi_drawdown = drawdown.min()
-    return maxi_drawdown,equity_curve.loc[:equity_curve.idxmin()].idxmax(),equity_curve.idxmin(),drawdown
+    return maxi_drawdown,equity_curve.loc[:drawdown.idxmin()].idxmax(),drawdown.idxmin(),drawdown
 
 maxi_drawdown,start_date,end_date,drawdown=max_drawdown(backtest["Adjusted Portfolio"])
 print("The maximum drawdown is ",round(maxi_drawdown*100,2),"%")
@@ -32,3 +32,15 @@ plt.title("Daily Drawdown")
 plt.plot(drawdown)
 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
 plt.show()
+
+def sharpe_ratio(equity_curve,risk_free_rate=0.065):
+    daily_return = equity_curve.pct_change().dropna()
+    mean = daily_return.mean()
+    std_deviation = daily_return.std()
+    annual_mean = mean*252
+    annual_std_deviation = std_deviation*np.sqrt(252)
+    sharpe = (annual_mean-risk_free_rate)/annual_std_deviation
+    return sharpe
+
+sharpe = sharpe_ratio(backtest["Adjusted Portfolio"])
+print("The Sharpe ratio for investment in Reliance is",round(sharpe,2))
