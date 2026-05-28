@@ -2,8 +2,10 @@ import pandas as pd
 from datetime import date,timedelta
 def generate_signals(df):
     df = df.copy()
-    df["Date"] = pd.to_datetime(df["Date"])
-    df = df.set_index("Date")
+    # Fix: guard against Date already being the index
+    if "Date" in df.columns:
+        df["Date"] = pd.to_datetime(df["Date"])
+        df = df.set_index("Date")
     fiftydayMA = df["Close"].rolling(window=50).mean()
     twohundreddayMA = df["Close"].rolling(window=200).mean()
     signals = pd.Series(data=0,index=df.index)

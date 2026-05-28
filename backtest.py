@@ -53,7 +53,7 @@ reliance = reliance.set_index("Date")
 backtest = run_backtest(reliance,signals,100000)
 final_portfolio = backtest["Portfolio"].iloc[-1]
 adjusted_final_portfolio = backtest["Adjusted Portfolio"].iloc[-1]
-if __name__=="_backtest_":
+if __name__=="__main__":
     print(f"Final Portfolio Value: ₹{final_portfolio:,.2f}")
     print(f"Adjusted Final Portfolio Value: ₹{adjusted_final_portfolio:,.2f}")
     # print(f"The difference is ₹{final_portfolio-adjusted_final_portfolio:,.2f}")

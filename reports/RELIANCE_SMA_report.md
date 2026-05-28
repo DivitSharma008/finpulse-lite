@@ -9,7 +9,7 @@
     Annualized Return: 3.04%
     Sharpe Ratio: -0.12
     Max Drawdown: -23.26%
-    Win Rate: 25.0%
-    Number of Trades: 8
+    Win Rate: 50.0%
+    Number of Trades: 4
     _________________________________
     

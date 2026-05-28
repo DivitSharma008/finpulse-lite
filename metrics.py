@@ -58,7 +58,6 @@ for i in range(len(backtest)):
         buy_date = backtest.index[i]
         buy_price = backtest["Price"].iloc[i]
         buy_shares = backtest["Shares"].iloc[i]
-        trade_log.append({"Buy Date": buy_date,"Sell Date": np.nan,"Buy Price": buy_price,"Sell Price": np.nan,"Shares": buy_shares,"Profit": np.nan})
     elif action == "SELL THE SHARES AT CLOSE PRICE":
         sell_date = backtest.index[i]
         sell_price = backtest["Price"].iloc[i]
