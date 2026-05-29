@@ -4,11 +4,8 @@ def generate_signals(df):
     df = df.copy()
 
     if "Date" in df.columns:
-        df["Date"] = pd.to_datetime(df["Date"], utc=True)
+        df["Date"] = pd.to_datetime(df["Date"])
         df = df.set_index("Date")
-    if df.index.tz is not None:
-        df.index = df.index.tz_localize(None)
-        df.index = pd.to_datetime(df.index.date)
 
     fiftydayMA      = df["Close"].rolling(window=50).mean()
     twohundreddayMA = df["Close"].rolling(window=200).mean()
