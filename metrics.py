@@ -105,7 +105,6 @@ trade_statistics(trade_log)
 
 # ── Strategy Report ───────────────────────────────────────────────────────────
 def strategy_report(equity_curve, trade_log):
-    stats = trade_statistics.__wrapped__ if hasattr(trade_statistics, '__wrapped__') else None
     content = f"""
 # Backtest Report
 
