@@ -33,7 +33,6 @@ for name, ticker_symbol in STOCKS.items():
         if df.empty:
             raise ValueError("No data returned — ticker may be delisted or incorrect.")
 
-        df.index = df.index.tz_localize(None)
         df.index = pd.to_datetime(df.index.date)
         df.index.name = "Date"
 

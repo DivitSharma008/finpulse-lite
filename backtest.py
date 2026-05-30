@@ -49,7 +49,6 @@ def run_backtest(df, signals, initial_capital=100000):
 reliance = pd.read_csv(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data\RELIANCE.csv")
 reliance["Date"] = pd.to_datetime(reliance["Date"])
 reliance = reliance.set_index("Date")
-reliance = reliance.dropna()
 
 # ── Run Backtest ──────────────────────────────────────────────────────────────
 backtest = run_backtest(reliance, signals, 100000)
