@@ -4,51 +4,56 @@ import os
 from datetime import date, timedelta
 
 STOCKS = {
-    "RELIANCE":   "RELIANCE.NS",
-    "TCS":        "TCS.NS",
-    "INFY":       "INFY.NS",
-    "HDFCBANK":   "HDFCBANK.NS",
-    "ICICIBANK":  "ICICIBANK.NS",
-    "SBIN":       "SBIN.NS",
-    "ITC":        "ITC.NS",
-    "LT":         "LT.NS",
+    "RELIANCE": "RELIANCE.NS",
+    "TCS": "TCS.NS",
+    "INFY": "INFY.NS",
+    "HDFCBANK": "HDFCBANK.NS",
+    "ICICIBANK": "ICICIBANK.NS",
+    "SBIN": "SBIN.NS",
+    "ITC": "ITC.NS",
+    "LT": "LT.NS",
     "HINDUNILVR": "HINDUNILVR.NS",
-    "KOTAKBANK":  "KOTAKBANK.NS",
+    "KOTAKBANK": "KOTAKBANK.NS",
 }
 
 DATA_DIR = r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data"
-START    = date.today() - timedelta(days=5 * 365)
-END      = date.today()
+
+START = date.today() - timedelta(days=6 * 365)
+END = date.today()
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-failed  = []
-success = []
+def get_stock_name(symbol):
+    inverted_dict = {v: k for k, v in STOCKS.items()}
+    return inverted_dict.get(symbol)
 
-for name, ticker_symbol in STOCKS.items():
+def load_data(symbol):
+    inverted_dict = {v: k for k, v in STOCKS.items()}
+    name = inverted_dict.get(symbol)
+
+    if name is None:
+        raise KeyError(f"'{symbol}' not found. Valid symbols: {', '.join(STOCKS.values())}")
+
+    ticker = yf.Ticker(symbol)
+    df = ticker.history(start=START, end=END)
+
+    if df.empty:
+        raise ValueError(f"No data returned for '{symbol}'")
+
+    df.index = pd.to_datetime(df.index.date)
+    df.index.name = "Date"
+
+    save_path = os.path.join(DATA_DIR, f"{name}.csv")
+    df.to_csv(save_path)
+
+    print(f"[✓] {name} — {len(df)} rows saved")
+
+    return save_path
+
+if __name__ == "__main__":
     try:
-        ticker = yf.Ticker(ticker_symbol)
-        df = ticker.history(start=START, end=END)
-
-        if df.empty:
-            raise ValueError("No data returned — ticker may be delisted or incorrect.")
-
-        df.index = pd.to_datetime(df.index.date)
-        df.index.name = "Date"
-
-        save_path = os.path.join(DATA_DIR, f"{name}.csv")
-        df.to_csv(save_path)
-        success.append(name)
-        print(f"[✓] {name:<12} — {len(df)} rows saved to {save_path}")
-
-    except ValueError as e:
-        failed.append(name)
-        print(f"[✗] {name:<12} — {e}")
+        symbol = input("Enter symbol: ").strip().upper()
+        load_data(symbol)
 
     except Exception as e:
-        failed.append(name)
-        print(f"[✗] {name:<12} — Unexpected error: {e}")
-
-print(f"\nDone. {len(success)}/{len(STOCKS)} stocks downloaded successfully.")
-if failed:
-    print(f"Failed: {', '.join(failed)}")
+        print(f"[✗] {type(e).__name__}: {e}")

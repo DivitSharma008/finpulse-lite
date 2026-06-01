@@ -3,12 +3,12 @@
 
     Strategy         : SMA Crossover (50/200)
     Stock            : RELIANCE.NS
-    Period           : 2021-05-31 to 2026-05-27
+    Period           : 2021-06-02 to 2026-05-29
     _____________________________________________
-    Total Return     : 4.61%
-    Annualized Return: 0.91%
-    Sharpe Ratio     : -0.26
+    Total Return     : 2.57%
+    Annualized Return: 0.51%
+    Sharpe Ratio     : -0.28
     Max Drawdown     : -23.26%
     Number of Trades : 4
-    Win Rate         : 50.0%
+    Win Rate         : 25.0%
     _____________________________________________

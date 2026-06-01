@@ -1,12 +1,8 @@
-import pandas as pd
+import os
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.ticker import PercentFormatter
-from backtest import backtest, signals
+import pandas as pd
+from download_data import STOCKS
 
-equity_curve = backtest["Adjusted Portfolio"]
-
-# ── Return Metrics ────────────────────────────────────────────────────────────
 def total_return(equity_curve):
     return equity_curve.iloc[-1] / equity_curve.iloc[0] - 1
 
@@ -14,114 +10,134 @@ def annualized_return(equity_curve):
     years = (equity_curve.index[-1] - equity_curve.index[0]).days / 365
     return (equity_curve.iloc[-1] / equity_curve.iloc[0]) ** (1 / years) - 1
 
-print(f"Total Return     : {round(total_return(equity_curve) * 100, 2)}%")
-print(f"Annualized Return: {round(annualized_return(equity_curve) * 100, 2)}%")
-
-# ── Drawdown ──────────────────────────────────────────────────────────────────
 def max_drawdown(equity_curve):
-    peak     = equity_curve.cummax()
+    peak = equity_curve.cummax()
     drawdown = equity_curve / peak - 1
-    max_dd   = drawdown.min()
-    dd_start = equity_curve.loc[:drawdown.idxmin()].idxmax()
-    dd_end   = drawdown.idxmin()
-    return max_dd, dd_start, dd_end, drawdown
+    return drawdown.min()
 
-max_dd, dd_start, dd_end, drawdown = max_drawdown(equity_curve)
-print(f"Max Drawdown     : {round(max_dd * 100, 2)}%")
-print(f"DD Period        : {dd_start.date()} → {dd_end.date()}")
-
-plt.figure()
-plt.plot(drawdown)
-plt.fill_between(drawdown.index, drawdown.values, 0, alpha=0.3, color="red")
-plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-plt.xlabel("Date")
-plt.ylabel("Drawdown")
-plt.title("Daily Drawdown")
-plt.tight_layout()
-plt.show()
-
-# ── Sharpe Ratio ──────────────────────────────────────────────────────────────
 def sharpe_ratio(equity_curve, risk_free_rate=0.065):
-    daily_return      = equity_curve.pct_change().dropna()
-    annual_mean       = daily_return.mean() * 252
-    annual_std        = daily_return.std() * np.sqrt(252)
+    returns = equity_curve.pct_change().dropna()
+    annual_mean = returns.mean() * 252
+    annual_std = returns.std() * np.sqrt(252)
     return (annual_mean - risk_free_rate) / annual_std
 
-sharpe = round(sharpe_ratio(equity_curve), 2)
-print(f"Sharpe Ratio     : {sharpe}")
+def build_trade_log(backtest):
 
-# ── Trade Log ─────────────────────────────────────────────────────────────────
-trade_log = []
-buy_date = buy_price = buy_shares = None
+    trades = []
 
-for i in range(len(backtest)):
-    action = backtest["Action"].iloc[i]
+    buy_date = None
+    buy_price = None
+    buy_shares = None
 
-    if action == "BUY":
-        buy_date   = backtest.index[i]
-        buy_price  = backtest["Price"].iloc[i]
-        buy_shares = backtest["Shares"].iloc[i]
+    for i in range(len(backtest)):
+        action = backtest["Action"].iloc[i]
 
-    elif action == "SELL" and buy_price is not None:
-        sell_date  = backtest.index[i]
-        sell_price = backtest["Price"].iloc[i]
-        profit     = (sell_price * 0.999 - buy_price * 1.001) * buy_shares
-        trade_log.append({
-            "Buy Date":   buy_date,
-            "Sell Date":  sell_date,
-            "Buy Price":  round(buy_price, 2),
-            "Sell Price": round(sell_price, 2),
-            "Shares":     round(buy_shares, 4),
-            "Profit":     round(profit, 2),
-        })
-        buy_date = buy_price = buy_shares = None   # reset
+        if action == "BUY":
+            buy_date = backtest.index[i]
+            buy_price = backtest["Price"].iloc[i]
+            buy_shares = backtest["Shares"].iloc[i]
 
-trade_log = pd.DataFrame(trade_log)
-print("\nTrade Log:")
-print(trade_log.to_string(index=False))
+        elif action == "SELL" and buy_price is not None:
+            sell_price = backtest["Price"].iloc[i]
 
-# ── Trade Statistics ──────────────────────────────────────────────────────────
+            profit = ((sell_price * 0.999) - (buy_price * 1.001)) * buy_shares
+
+            trades.append(
+                {
+                    "Buy Date": buy_date,
+                    "Sell Date": backtest.index[i],
+                    "Buy Price": round(buy_price, 2),
+                    "Sell Price": round(sell_price, 2),
+                    "Shares": round(buy_shares, 4),
+                    "Profit": round(profit, 2),
+                }
+            )
+
+            buy_date = None
+            buy_price = None
+            buy_shares = None
+
+    return pd.DataFrame(trades)
+
 def trade_statistics(trade_log):
+
     if trade_log.empty:
-        print("No completed trades.")
-        return
+        return {"num_trades": 0, "win_rate": 0, "profit_factor": 0}
 
-    n          = len(trade_log)
-    wins       = trade_log[trade_log["Profit"] > 0]
-    losses     = trade_log[trade_log["Profit"] < 0]
-    winrate    = len(wins) / n
-    avg_win    = wins["Profit"].mean()   if not wins.empty   else 0
-    avg_loss   = losses["Profit"].mean() if not losses.empty else 0
-    loss_sum   = losses["Profit"].sum()
-    pf         = wins["Profit"].sum() / abs(loss_sum) if loss_sum != 0 else float("inf")
+    wins = trade_log[trade_log["Profit"] > 0]
 
-    print(f"\nNumber of Trades : {n}")
-    print(f"Win Rate         : {round(winrate * 100, 2)}%")
-    print(f"Avg Win (₹)      : ₹{avg_win:,.2f}")
-    print(f"Avg Loss (₹)     : ₹{avg_loss:,.2f}")
-    print(f"Profit Factor    : {round(pf, 2)}")
+    losses = trade_log[trade_log["Profit"] < 0]
 
-trade_statistics(trade_log)
+    win_rate = len(wins) / len(trade_log)
 
-# ── Strategy Report ───────────────────────────────────────────────────────────
-def strategy_report(equity_curve, trade_log):
+    loss_sum = losses["Profit"].sum()
+
+    profit_factor = (wins["Profit"].sum() / abs(loss_sum) if loss_sum != 0 else float("inf"))
+
+    return {"num_trades": len(trade_log),"win_rate": win_rate,"profit_factor": profit_factor,}
+
+def strategy_report(equity_curve, trade_log, symbol):
+    stats = trade_statistics(trade_log)
+    inverted_dict = {v: k for k, v in STOCKS.items()}
+    name = inverted_dict.get(symbol, symbol)
     content = f"""
 # Backtest Report
 
-    Strategy         : SMA Crossover (50/200)
-    Stock            : RELIANCE.NS
-    Period           : {equity_curve.index[0].date()} to {equity_curve.index[-1].date()}
-    _____________________________________________
-    Total Return     : {round(total_return(equity_curve) * 100, 2)}%
-    Annualized Return: {round(annualized_return(equity_curve) * 100, 2)}%
-    Sharpe Ratio     : {sharpe}
-    Max Drawdown     : {round(max_dd * 100, 2)}%
-    Number of Trades : {len(trade_log)}
-    Win Rate         : {round(len(trade_log[trade_log['Profit'] > 0]) / len(trade_log) * 100, 2) if not trade_log.empty else 'N/A'}%
-    _____________________________________________
+Strategy         : SMA Crossover (50/200)
+Stock            : {symbol}
+Period           : {equity_curve.index[0]} -> {equity_curve.index[-1]}
+________________________________________________
+Total Return     : {total_return(equity_curve) * 100:.2f}%
+Annualized Return: {annualized_return(equity_curve) * 100:.2f}%
+Sharpe Ratio     : {sharpe_ratio(equity_curve):.2f}
+Max Drawdown     : {max_drawdown(equity_curve) * 100:.2f}%
+Win Rate         : {stats["win_rate"] * 100:.2f}%
+Number of Trades : {stats["num_trades"]}
+________________________________________________
 """
-    with open(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\reports\RELIANCE_SMA_report.md", "w") as f:
-        f.write(content)
-    print("\nReport saved.")
 
-strategy_report(equity_curve, trade_log)
+    report_dir = (r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\reports")
+    os.makedirs(report_dir, exist_ok=True)
+    path = os.path.join(report_dir, f"{name}_SMA_report.md")
+    with open(path, "w") as f:
+        f.write(content)
+    print(f"[✓] Report saved: {path}")
+
+if __name__ == "__main__":
+
+    import pandas as pd
+    from strategy_sma import generate_signals
+    from backtest import run_backtest
+    from download_data import DATA_DIR
+
+    try:
+        symbol = input("Enter symbol: ").strip().upper()
+
+        inverted_dict = {v: k for k, v in STOCKS.items()}
+        name = inverted_dict.get(symbol)
+
+        if name is None:
+            raise KeyError(f"Unknown symbol: {symbol}")
+
+        df = pd.read_csv(
+            os.path.join(DATA_DIR, f"{name}.csv"),
+            index_col="Date",
+            parse_dates=True
+        )
+
+        signals = generate_signals(symbol)
+
+        backtest = run_backtest(df, signals)
+
+        equity_curve = backtest["Adjusted Portfolio"]
+
+        trade_log = build_trade_log(backtest)
+
+        strategy_report(
+            equity_curve,
+            trade_log,
+            symbol
+        )
+
+    except Exception as e:
+        print(f"[✗] {type(e).__name__}: {e}")
