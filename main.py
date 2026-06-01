@@ -1,11 +1,10 @@
 import os
 import pandas as pd
-
-from download_data import load_data, DATA_DIR, STOCKS
-from strategy_sma import generate_signals
-from backtest import run_backtest,get_stock_name
-
-from metrics import build_trade_log,trade_statistics, strategy_report
+from .src.data_loader import load_data,DATA_DIR,STOCKS,get_stock_name
+from .src.strategies import generate_signals
+from .src.backtester import run_backtest
+from .src.metrics import build_trade_log,trade_statistics
+from .src.reporting import strategy_report
 
 
 def run_full_pipeline(symbol, strategy_name="SMA"):
