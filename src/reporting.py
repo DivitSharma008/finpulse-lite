@@ -31,9 +31,9 @@ ________________________________________________
 if __name__ == "__main__":
 
     import pandas as pd
-    from strategy_sma import generate_signals
-    from backtest import run_backtest
-    from download_data import DATA_DIR
+    from strategies import generate_signals
+    from backtester import run_backtest
+    from data_loader import DATA_DIR
 
     try:
         symbol = input("Enter symbol: ").strip().upper()

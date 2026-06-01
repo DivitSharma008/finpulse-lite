@@ -18,7 +18,7 @@ STOCKS = {
 
 DATA_DIR = r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data"
 
-START = date.today() - timedelta(days=6 * 365)
+START = date.today() - timedelta(days=5 * 365)
 END = date.today()
 
 os.makedirs(DATA_DIR, exist_ok=True)

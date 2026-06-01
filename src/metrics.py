@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from download_data import STOCKS
+from data_loader import STOCKS
 
 def total_return(equity_curve):
     return equity_curve.iloc[-1] / equity_curve.iloc[0] - 1
@@ -80,9 +80,9 @@ def trade_statistics(trade_log):
 if __name__ == "__main__":
 
     import pandas as pd
-    from strategy_sma import generate_signals
-    from backtest import run_backtest
-    from download_data import DATA_DIR
+    from strategies import generate_signals
+    from backtester import run_backtest
+    from data_loader import DATA_DIR
 
     try:
         symbol = input("Enter symbol: ").strip().upper()
