@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-from strategy_sma import generate_signals
-from download_data import DATA_DIR, STOCKS,get_stock_name
+from strategies import generate_signals
+from data_loader import DATA_DIR, STOCKS,get_stock_name
 
 
 def run_backtest(df, signals, initial_capital=100000):
