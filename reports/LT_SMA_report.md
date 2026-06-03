@@ -3,12 +3,12 @@
 
 Strategy         : SMA Crossover (50/200)
 Stock            : LT.NS
-Period           : 2020-06-02 00:00:00 -> 2026-05-29 00:00:00
+Period           : 2021-06-04 -> 2026-06-02
 ________________________________________________
-Total Return     : 113.29%
-Annualized Return: 13.48%
-Sharpe Ratio     : 0.41
-Max Drawdown     : -25.01%
-Win Rate         : 100.00%
+Total Return     : 73.86%
+Annualized Return: 11.70%
+Sharpe Ratio     : 0.34
+Max Drawdown     : -24.35%
+Win Rate         : 66.67%
 Number of Trades : 3
 ________________________________________________

@@ -19,7 +19,7 @@ def strategy_report(equity_curve, trade_log, symbol):
 
 Strategy         : SMA Crossover (50/200)
 Stock            : {symbol}
-Period           : {equity_curve.index[0]} -> {equity_curve.index[-1]}
+Period           : {equity_curve.index[0].date()} -> {equity_curve.index[-1].date()}
 ________________________________________________
 Total Return     : {total_return(equity_curve) * 100:.2f}%
 Annualized Return: {annualized_return(equity_curve) * 100:.2f}%

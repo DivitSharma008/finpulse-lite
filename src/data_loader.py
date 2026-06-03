@@ -29,8 +29,7 @@ def get_stock_name(symbol):
     return inverted_dict.get(symbol)
 
 def load_data(symbol):
-    inverted_dict = {v: k for k, v in STOCKS.items()}
-    name = inverted_dict.get(symbol)
+    name=get_stock_name(symbol)
 
     if name is None:
         raise KeyError(f"'{symbol}' not found. Valid symbols: {', '.join(STOCKS.values())}")
