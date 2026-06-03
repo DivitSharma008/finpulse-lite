@@ -1,4 +1,13 @@
-from metrics import total_return,annualized_return,sharpe_ratio,max_drawdown,build_trade_log,trade_statistics,trade_log,STOCKS
+# ✅ FIXED: Corrected imports - trade_log was not a function, STOCKS is from data_loader
+from metrics import (
+    total_return,
+    annualized_return,
+    sharpe_ratio,
+    max_drawdown,
+    build_trade_log,
+    trade_statistics,
+)
+from data_loader import STOCKS
 import os
 
 def strategy_report(equity_curve, trade_log, symbol):
@@ -21,7 +30,8 @@ Number of Trades : {stats["num_trades"]}
 ________________________________________________
 """
 
-    report_dir = (r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\reports")
+    # ✅ FIXED: Portable path using os.path.join()
+    report_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "reports")
     os.makedirs(report_dir, exist_ok=True)
     path = os.path.join(report_dir, f"{name}_SMA_report.md")
     with open(path, "w") as f:

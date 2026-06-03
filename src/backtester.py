@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 from strategies import generate_signals
-from data_loader import DATA_DIR, STOCKS,get_stock_name
+from data_loader import DATA_DIR, STOCKS, get_stock_name
 
 
 def run_backtest(df, signals, initial_capital=100000):
@@ -72,8 +72,7 @@ if __name__ == "__main__":
        
         print("Final Portfolio: ₹", round(backtest["Adjusted Portfolio"].iloc[-1], 2))
 
-        df["Buy & Hold"] = df["Close"] * (100000 / df["Close"].iloc[0])
-
+        # ✅ FIXED: Removed duplicate line
         df["Buy & Hold"] = df["Close"] * (100000 / df["Close"].iloc[0])
 
         fig, ax = plt.subplots(figsize=(13, 5))
@@ -99,9 +98,10 @@ if __name__ == "__main__":
 
         fig.tight_layout()
 
-        fig.savefig(
-            fr"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\images\{name}_backtest.png"
-        )
+        # ✅ FIXED: Portable path using os.path.join()
+        images_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "images")
+        os.makedirs(images_dir, exist_ok=True)
+        fig.savefig(os.path.join(images_dir, f"{name}_backtest.png"))
 
         plt.show()
 

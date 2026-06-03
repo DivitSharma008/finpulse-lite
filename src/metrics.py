@@ -74,7 +74,7 @@ def trade_statistics(trade_log):
 
     profit_factor = (wins["Profit"].sum() / abs(loss_sum) if loss_sum != 0 else float("inf"))
 
-    return {"num_trades": len(trade_log),"win_rate": win_rate,"profit_factor": profit_factor,}
+    return {"num_trades": len(trade_log), "win_rate": win_rate, "profit_factor": profit_factor}
 
 
 if __name__ == "__main__":
@@ -106,6 +106,26 @@ if __name__ == "__main__":
         equity_curve = backtest["Adjusted Portfolio"]
 
         trade_log = build_trade_log(backtest)
+
+        # ✅ FIXED: Now actually prints the metrics instead of just calculating them
+        print("\n" + "="*50)
+        print(f"PERFORMANCE METRICS FOR {name}")
+        print("="*50)
+        print(f"Total Return: {total_return(equity_curve)*100:.2f}%")
+        print(f"Annualized Return: {annualized_return(equity_curve)*100:.2f}%")
+        print(f"Sharpe Ratio: {sharpe_ratio(equity_curve):.2f}")
+        print(f"Max Drawdown: {max_drawdown(equity_curve)*100:.2f}%")
+        
+        stats = trade_statistics(trade_log)
+        print(f"\nNumber of Trades: {stats['num_trades']}")
+        print(f"Win Rate: {stats['win_rate']*100:.2f}%")
+        print(f"Profit Factor: {stats['profit_factor']:.2f}")
+        
+        if not trade_log.empty:
+            print(f"\nTotal Profit: ₹ {trade_log['Profit'].sum():.2f}")
+            print("\nTrade Log:")
+            print(trade_log)
+        print("="*50 + "\n")
 
     except Exception as e:
         print(f"[✗] {type(e).__name__}: {e}")

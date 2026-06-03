@@ -16,7 +16,8 @@ STOCKS = {
     "KOTAKBANK": "KOTAKBANK.NS",
 }
 
-DATA_DIR = r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data"
+# ✅ FIXED: Use relative paths (portable across Windows/Mac/Linux)
+DATA_DIR = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "data")
 
 START = date.today() - timedelta(days=5 * 365)
 END = date.today()
