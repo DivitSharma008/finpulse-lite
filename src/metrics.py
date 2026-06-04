@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from data_loader import STOCKS
+from .data_loader import STOCKS,get_stock_name
 
 def total_return(equity_curve):
     return equity_curve.iloc[-1] / equity_curve.iloc[0] - 1
@@ -80,15 +80,14 @@ def trade_statistics(trade_log):
 if __name__ == "__main__":
 
     import pandas as pd
-    from strategies import generate_signals
-    from backtester import run_backtest
-    from data_loader import DATA_DIR
+    from .strategies import generate_signals,generate_rsi_signals
+    from .backtester import run_backtest
+    from .data_loader import DATA_DIR
 
     try:
         symbol = input("Enter symbol: ").strip().upper()
-
-        inverted_dict = {v: k for k, v in STOCKS.items()}
-        name = inverted_dict.get(symbol)
+        strategy_name = input("Enter the strategy to be used: ").strip().upper()
+        name = get_stock_name(symbol)
 
         if name is None:
             raise KeyError(f"Unknown symbol: {symbol}")
@@ -99,7 +98,10 @@ if __name__ == "__main__":
             parse_dates=True
         )
 
-        signals = generate_signals(symbol)
+        if strategy_name == "SMA":
+            signals = generate_signals(symbol)
+        elif strategy_name == "RSI":
+            signals = generate_rsi_signals(symbol,14,30,70)
 
         backtest = run_backtest(df, signals)
 
@@ -109,7 +111,7 @@ if __name__ == "__main__":
 
         # ✅ FIXED: Now actually prints the metrics instead of just calculating them
         print("\n" + "="*50)
-        print(f"PERFORMANCE METRICS FOR {name}")
+        print(f"PERFORMANCE METRICS FOR {name} using {strategy_name} STRATEGY")
         print("="*50)
         print(f"Total Return: {total_return(equity_curve)*100:.2f}%")
         print(f"Annualized Return: {annualized_return(equity_curve)*100:.2f}%")

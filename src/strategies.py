@@ -1,7 +1,6 @@
 import pandas as pd
 import os
-from data_loader import STOCKS, DATA_DIR, get_stock_name
-
+from .data_loader import STOCKS, DATA_DIR, get_stock_name
 SUPPORTED_STRATEGIES = ["SMA", "RSI"]
 
 
@@ -33,7 +32,7 @@ def generate_signals(symbol, strategy_name="SMA"):
     return signals
 
 
-def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70):
+def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_name="RSI"):
     name = get_stock_name(symbol)
 
     if name is None:
@@ -67,15 +66,15 @@ def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70):
     print("[✓] RSI Signals generated")
     return signals
 
-
 if __name__ == "__main__":
     symbol = input("Enter symbol: ").strip().upper()
-
+    strategy_name = input("Enter the strategy to be used: ").strip().upper()
     try:
-        signals = generate_signals(symbol)
-        rsi_signals = generate_rsi_signals(symbol, 14, 30, 70)
+        if strategy_name == "SMA":
+            signals = generate_signals(symbol)
+        elif strategy_name == "RSI":
+            signals = generate_rsi_signals(symbol,14,30,70)
         print(signals.value_counts())
-        print(rsi_signals.value_counts())
 
     except Exception as e:
         print(f"[✗] {e}")

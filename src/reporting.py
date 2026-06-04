@@ -1,5 +1,5 @@
 # ✅ FIXED: Corrected imports - trade_log was not a function, STOCKS is from data_loader
-from metrics import (
+from .metrics import (
     total_return,
     annualized_return,
     sharpe_ratio,
@@ -7,17 +7,16 @@ from metrics import (
     build_trade_log,
     trade_statistics,
 )
-from data_loader import STOCKS
+from .data_loader import STOCKS,get_stock_name
 import os
 
-def strategy_report(equity_curve, trade_log, symbol):
+def strategy_report(equity_curve, trade_log, symbol,strategy_name):
     stats = trade_statistics(trade_log)
-    inverted_dict = {v: k for k, v in STOCKS.items()}
-    name = inverted_dict.get(symbol, symbol)
+    name = get_stock_name(symbol)
     content = f"""
 # Backtest Report
 
-Strategy         : SMA Crossover (50/200)
+Strategy         : {strategy_name} STRATEGY
 Stock            : {symbol}
 Period           : {equity_curve.index[0].date()} -> {equity_curve.index[-1].date()}
 ________________________________________________
@@ -33,7 +32,7 @@ ________________________________________________
     # ✅ FIXED: Portable path using os.path.join()
     report_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "reports")
     os.makedirs(report_dir, exist_ok=True)
-    path = os.path.join(report_dir, f"{name}_SMA_report.md")
+    path = os.path.join(report_dir, f"{name}_{strategy_name}_report.md")
     with open(path, "w") as f:
         f.write(content)
     print(f"[✓] Report saved: {path}")
@@ -41,15 +40,14 @@ ________________________________________________
 if __name__ == "__main__":
 
     import pandas as pd
-    from strategies import generate_signals
-    from backtester import run_backtest
-    from data_loader import DATA_DIR
+    from .strategies import generate_signals,generate_rsi_signals
+    from .backtester import run_backtest
+    from .data_loader import DATA_DIR
 
     try:
         symbol = input("Enter symbol: ").strip().upper()
-
-        inverted_dict = {v: k for k, v in STOCKS.items()}
-        name = inverted_dict.get(symbol)
+        strategy_name = input("Enter the strategy to be used: ").strip().upper()
+        name = get_stock_name(symbol)
 
         if name is None:
             raise KeyError(f"Unknown symbol: {symbol}")
@@ -60,7 +58,10 @@ if __name__ == "__main__":
             parse_dates=True
         )
 
-        signals = generate_signals(symbol)
+        if strategy_name == "SMA":
+            signals = generate_signals(symbol)
+        elif strategy_name == "RSI":
+            signals = generate_rsi_signals(symbol,14,30,70)
 
         backtest = run_backtest(df, signals)
 
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         strategy_report(
             equity_curve,
             trade_log,
-            symbol
+            symbol,strategy_name
         )
 
     except Exception as e:

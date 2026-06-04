@@ -1,1 +1,4 @@
-I organized the repository and made necessary changes to the programs where imports where being done.
+# Day 2 — Repository Organisation & Import Fixes
+
+- Reorganised the repository structure for clarity and maintainability.
+- Fixed import paths across all modules to correctly reflect the new folder structure.

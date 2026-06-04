@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-from strategies import generate_signals
-from data_loader import DATA_DIR, STOCKS, get_stock_name
+from .strategies import generate_signals,generate_rsi_signals
+from .data_loader import DATA_DIR, STOCKS, get_stock_name
 
 
 def run_backtest(df, signals, initial_capital=100000):
@@ -60,14 +60,15 @@ def run_backtest(df, signals, initial_capital=100000):
 
 if __name__ == "__main__":
     symbol = input("Enter symbol: ").strip().upper()
-
+    strategy_name = input("Enter the strategy to be used: ").strip().upper()
     try:
         name = get_stock_name(symbol)
 
         df = pd.read_csv(os.path.join(DATA_DIR, f"{name}.csv"), index_col="Date", parse_dates=True)
-
-        signals = generate_signals(symbol)
-
+        if strategy_name == "SMA":
+            signals = generate_signals(symbol)
+        elif strategy_name == "RSI":
+            signals = generate_rsi_signals(symbol,14,30,70)
         backtest = run_backtest(df, signals)
        
         print("Final Portfolio: ₹", round(backtest["Adjusted Portfolio"].iloc[-1], 2))
@@ -81,7 +82,7 @@ if __name__ == "__main__":
             backtest.index,
             backtest["Adjusted Portfolio"],
             color="b",
-            label="Strategy (adj.)"
+            label=f"{strategy_name} Strategy"
         )
 
         ax.plot(

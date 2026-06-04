@@ -1,2 +1,4 @@
-Gave a demo to my manager by summarising everything done over the past week
-I organised all the python files , CSV files and charts into seperate folders.
+# Day 5 — Demo & Project Organisation
+
+- Presented a demo to my manager, summarising all work completed over the past week.
+- Organised the project structure by separating Python scripts, CSV data files, and chart images into dedicated folders.
