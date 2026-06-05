@@ -39,7 +39,6 @@ def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_
         raise KeyError(f"Unknown symbol: {symbol}")
 
     path = os.path.join(DATA_DIR, f"{name}.csv")
-    # ✅ FIXED: parse_dates already set, removed redundant conversion
     df = pd.read_csv(path, index_col="Date", parse_dates=True)
 
     if len(df) < period:
@@ -47,13 +46,11 @@ def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_
 
     delta = df["Close"].diff()
 
-    # ✅ correct gain/loss split — no negative losses
     gain = delta.clip(lower=0)
     loss = delta.clip(upper=0).abs()
 
-    # ✅ span= required for ewm
-    avg_gain = gain.ewm(alpha=1/period, adjust=False).mean()
-    avg_loss = loss.ewm(alpha=1/period, adjust=False).mean()
+    avg_gain = gain.ewm(span = period, adjust=False).mean()
+    avg_loss = loss.ewm(span = period, adjust=False).mean()
 
     RS = avg_gain / avg_loss
     RSI = 100 - 100 / (1 + RS)
