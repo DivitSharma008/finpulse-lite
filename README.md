@@ -1,195 +1,259 @@
-# FinPulse Lite
+# 📈 FinPulse: Algorithmic Trading Backtester
 
-A Python-based stock market analysis and backtesting framework that analyzes historical stock data, generates trading signals using the SMA Crossover strategy, and evaluates trading performance through comprehensive backtesting.
+A Python-based backtesting framework for evaluating technical trading strategies on Indian stock market data (NSE). FinPulse supports multiple trading strategies, automated performance metrics calculation, and comprehensive reporting.
 
-## 📋 Overview
+## 🎯 Overview
 
-FinPulse Lite provides tools to:
-- **Download** historical stock data for 10 major Indian stocks
-- **Visualize** price movements with moving averages (50-day and 200-day SMA)
-- **Backtest** trading strategies (SMA Crossover) with realistic brokerage costs
-- **Generate** detailed equity curves and performance reports
-- **Compare** trading strategies (e.g., "Buy & Hold" vs. SMA Crossover)
-
-## 🎯 Key Features
-
-- **Multi-Stock Analysis**: Analyze 10 major Indian stocks (RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK, ITC, SBIN, LT, HINDUNILVR, KOTAKBANK)
-- **SMA Crossover Strategy**: Implements 50-day and 200-day moving average crossover signals
-- **Realistic Backtesting**: Includes brokerage costs (~0.1% per trade) in portfolio calculations
-- **Visual Charts**: Generates high-quality charts showing closing prices and moving averages
-- **Equity Curves**: Plots portfolio performance over time to compare strategies
-- **Trade Logging**: Detailed logging of all trades executed during backtesting
-
-## 📦 Installation
-
-### Prerequisites
-- Python 3.8 or higher
-
-### Setup
-1. Clone the repository:
-```bash
-git clone https://github.com/DivitSharma008/finpulse-lite.git
-cd finpulse-lite
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-### Dependencies
-- **yfinance**: Fetch historical stock data from Yahoo Finance
-- **pandas**: Data manipulation and analysis
-- **numpy**: Numerical computations
-- **matplotlib**: Visualization and charting
-
-## 🚀 Quick Start
-
-### Step 1: Download Stock Data
-Run the data loader to fetch historical stock data (stored as CSV files):
-```bash
-python -m src.data_loader
-```
-This creates CSV files in the `data/` directory with historical price data for each stock.
-
-### Step 2: Generate Charts
-Visualize closing prices and moving averages for all stocks:
-```bash
-python plot_stock.py
-```
-Charts are saved to the `images/` folder showing:
-- Closing price line
-- 50-day moving average
-- 200-day moving average
-
-**Example Output:**
-![INFY Chart](https://github.com/user-attachments/assets/25215e19-76d5-468e-8f9b-fcf067f35033)
-
-### Step 3: Run Backtests
-Execute the full backtesting pipeline for a specific stock:
-```bash
-python main.py
-```
-When prompted, enter a stock symbol (e.g., `RELIANCE`, `INFY`, `TCS`):
-```
-Enter symbol: RELIANCE
-```
-
-The pipeline will:
-1. Load historical data for the stock
-2. Generate SMA crossover trading signals
-3. Run backtesting with initial capital of ₹100,000
-4. Calculate performance metrics
-5. Generate equity curve visualization
-
-**Example Equity Curve:**
-![RELIANCE Backtest](https://github.com/user-attachments/assets/e8e7bc2b-6214-4534-9065-eaaa15378bd4)
+FinPulse enables traders and analysts to:
+- Download historical stock price data from Yahoo Finance
+- Implement and test trading strategies (SMA, RSI)
+- Backtest strategies against real historical data
+- Calculate performance metrics (Sharpe ratio, drawdown, returns)
+- Generate detailed trade logs and reports
+- Compare strategy performance with buy-and-hold benchmark
 
 ## 📁 Project Structure
 
 ```
 finpulse-lite/
-├── main.py                 # Main pipeline orchestrator
-├── plot_stock.py           # Chart generation script
-├── requirements.txt        # Python dependencies
-├── src/                    # Core modules
-│   ├── data_loader.py     # Fetch and store stock data
-│   ├── strategies.py      # Trading strategy implementations
-│   ├── backtester.py      # Backtesting engine
-│   ├── metrics.py         # Performance metrics calculation
-│   └── reporting.py       # Report generation
+├── data_loader.py          # Stock data fetching and management
+├── strategies.py           # Technical analysis strategy implementations
+├── backtester.py           # Backtesting engine
+├── metrics.py              # Performance calculation utilities
+├── reporting.py            # Report generation
 ├── data/                   # Historical stock data (CSV files)
-├── images/                 # Generated charts
-├── reports/                # Generated reports
-├── notes/                  # Project notes and documentation
-└── README.md              # This file
+├── images/                 # Equity curve charts
+└── reports/                # Generated markdown reports
 ```
 
-## 🎓 Trading Strategy
+## 🏆 Supported Stocks
 
-### SMA Crossover Strategy
-The SMA (Simple Moving Average) Crossover strategy uses two moving averages:
-- **50-day SMA**: Short-term trend indicator
-- **200-day SMA**: Long-term trend indicator
+The framework supports 10 major Indian blue-chip stocks:
+- RELIANCE (Reliance Industries)
+- TCS (Tata Consultancy Services)
+- INFY (Infosys)
+- HDFCBANK (HDFC Bank)
+- ICICIBANK (ICICI Bank)
+- SBIN (State Bank of India)
+- ITC (ITC Limited)
+- LT (Larsen & Toubro)
+- HINDUNILVR (Hindustan Unilever)
+- KOTAKBANK (Kotak Mahindra Bank)
 
-**Buy Signal**: When the 50-day MA crosses above the 200-day MA (bullish)
-**Sell Signal**: When the 50-day MA crosses below the 200-day MA (bearish)
+## 📊 Supported Strategies
 
-### Backtesting Parameters
-- **Initial Capital**: ₹100,000
-- **Brokerage Cost**: 0.1% per trade
-- **Position**: Single stock (all capital deployed on buy signals)
+### 1. SMA (Simple Moving Average)
+Crossover strategy using 50-day and 200-day moving averages:
+- **Buy Signal**: When 50-day SMA crosses above 200-day SMA
+- **Sell Signal**: When 50-day SMA crosses below 200-day SMA
+- **Minimum Data Required**: 200 days
 
-### Key Finding
-Analysis of RELIANCE stock revealed that the **"Buy & Hold" strategy** outperformed the SMA Crossover strategy, suggesting that brokerage costs and whipsaw trades can diminish returns compared to a simple long-term hold approach.
+### 2. RSI (Relative Strength Index)
+Momentum-based strategy using the 14-period RSI:
+- **Buy Signal**: RSI < 30 (oversold condition)
+- **Sell Signal**: RSI > 70 (overbought condition)
+- **Parameters**: Period=14, Oversold=30, Overbought=70
 
-## 💡 Usage Examples
+## 🚀 Installation
 
-### Analyze a Specific Stock
+### Requirements
+- Python 3.7+
+- pandas
+- numpy
+- yfinance
+- matplotlib
+
+### Setup
+
 ```bash
-python main.py
-# Enter: INFY
+# Clone or download the project
+cd finpulse-lite
+
+# Install dependencies
+pip install pandas numpy yfinance matplotlib
+
+# (Optional) Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-### Generate All Stock Charts
+## 💡 Usage
+
+### 1. Download Stock Data
+
 ```bash
-python plot_stock.py
+python data_loader.py
+# Enter symbol: TCS.NS
+# Output: [✓] TCS - 1260 rows saved
 ```
 
-### Check Stock Data
+### 2. Generate Trading Signals
+
+```bash
+python strategies.py
+# Enter symbol: TCS.NS
+# Enter the strategy to be used: SMA
+# [✓] SMA Signals generated
+```
+
+### 3. Run Backtest
+
+```bash
+python backtester.py
+# Enter symbol: TCS.NS
+# Enter the strategy to be used: SMA
+# [✓] Backtest completed
+# Final Portfolio: ₹ 156,234.50
+```
+
+Generates:
+- Equity curve visualization comparing strategy vs buy-and-hold
+- Portfolio performance data with transaction details
+
+### 4. Calculate Performance Metrics
+
+```bash
+python metrics.py
+# Enter symbol: TCS.NS
+# Enter the strategy to be used: SMA
+```
+
+**Output includes:**
+- Total Return
+- Annualized Return
+- Sharpe Ratio (risk-adjusted returns)
+- Maximum Drawdown
+- Win Rate
+- Profit Factor
+- Detailed trade log
+
+### 5. Generate Report
+
+```bash
+python reporting.py
+# Enter symbol: TCS.NS
+# Enter the strategy to be used: SMA
+# [✓] Report saved: reports/TCS_SMA_report.md
+```
+
+Generates a markdown report with all key metrics and period details.
+
+## 📊 Key Metrics Explained
+
+| Metric | Description | Interpretation |
+|--------|-------------|-----------------|
+| **Total Return** | Overall profit/loss percentage | Higher is better |
+| **Annualized Return** | Yearly average return | Higher is better |
+| **Sharpe Ratio** | Risk-adjusted return (default risk-free rate: 6.5%) | Higher is better (>1 is good) |
+| **Max Drawdown** | Largest peak-to-trough decline | Closer to 0% is better |
+| **Win Rate** | Percentage of profitable trades | Higher is better (>50% is good) |
+| **Profit Factor** | Ratio of gross profit to gross loss | Higher is better (>1 is profitable) |
+
+## ⚙️ Backtesting Parameters
+
+- **Initial Capital**: ₹100,000 (configurable)
+- **Commission**: 0.1% on buy orders, 0.1% on sell orders
+- **Data Period**: 5 years of historical data (configurable)
+- **Trading Logic**: Single position at a time (all-in/all-out)
+
+## 📂 Output Files
+
+### Generated Data
+- `data/` - CSV files with OHLCV data
+- `images/` - Equity curve charts (PNG)
+- `reports/` - Performance reports (Markdown)
+
+### Example Report Output
+```
+# Backtest Report
+
+Strategy         : SMA STRATEGY
+Stock            : TCS.NS
+Period           : 2021-06-05 -> 2026-06-05
+________________________________________________
+Total Return     : 145.32%
+Annualized Return: 19.85%
+Sharpe Ratio     : 1.45
+Max Drawdown     : -32.15%
+Win Rate         : 58.33%
+Number of Trades : 24
+________________________________________________
+```
+
+## 🏗️ Architecture
+
+```
+Data Flow:
+  Yahoo Finance
+       ↓
+  data_loader.py → CSV files
+       ↓
+  strategies.py → Trading signals
+       ↓
+  backtester.py → Transaction log
+       ↓
+  metrics.py ← ← ← → reporting.py
+       ↓
+  Performance metrics & reports
+```
+
+## ⚠️ Limitations & Assumptions
+
+1. **No slippage** beyond fixed commission rates
+2. **Single position trading** - either fully invested or fully in cash
+3. **No shorting** - only long positions
+4. **Historical data only** - backtesting mode
+5. **Market hours execution** - trades execute at closing price
+6. **Commission fixed at 0.1%** - doesn't vary by broker
+
+## ⚙️ Configuration
+
+Edit these variables in `data_loader.py` to customize:
+
 ```python
-import pandas as pd
-
-# Load stock data
-df = pd.read_csv("data/RELIANCE.csv", index_col="Date", parse_dates=True)
-print(df.head())
-print(df.describe())
+DATA_DIR = "./data"  # Data storage location (cross-platform)
+START = date.today() - timedelta(days=5*365)  # Lookback period
+END = date.today()  # End date
+STOCKS = {...}  # Supported stock symbols
 ```
 
-## 📊 Output Files
+## 🔧 Troubleshooting
 
-The project generates:
-- **CSV Files** (`data/` folder): Historical stock data with OHLC values
-- **Chart Images** (`images/` folder): PNG files showing price and moving averages
-- **Equity Curves** (`reports/` folder): Performance plots for backtested strategies
-- **Trade Logs**: Detailed transaction history during backtesting
+| Issue | Solution |
+|-------|----------|
+| `No data returned for 'X'` | Symbol may be incorrect or delisted |
+| `Not enough data to calculate 200-day SMA` | Download more historical data |
+| `KeyError: Unknown symbol` | Check if symbol is in STOCKS dictionary |
+| `Network error fetching data` | Check internet connection and yfinance status |
 
-## 🔍 How It Works
+## ⚡ Performance Tips
 
-1. **Data Ingestion**: Historical stock data is downloaded via yfinance
-2. **Signal Generation**: Trading signals are generated based on moving average crossovers
-3. **Backtesting**: Portfolio is simulated through historical data with realistic costs
-4. **Performance Analysis**: Equity curves and metrics are calculated
-5. **Visualization**: Results are displayed as charts and reports
+- Use RSI strategy for faster backtests (fewer days required)
+- Cache downloaded data to avoid repeated API calls
+- Run backtests on multiple strategies to find optimal parameters
+- Test on different time periods to validate robustness
 
-## 🛠️ Configuration
+## 🚀 Future Enhancements
 
-Edit the following in relevant files:
+- [ ] Multiple position support
+- [ ] Shorting strategies
+- [ ] Parameter optimization (grid search)
+- [ ] Additional technical indicators (MACD, Bollinger Bands)
+- [ ] Risk management (stop-loss, position sizing)
+- [ ] Real-time trading integration
+- [ ] Web dashboard for visualization
+- [ ] Machine learning strategy generation
 
-**In `plot_stock.py`:**
-```python
-DATA_DIR   = r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data"
-IMAGES_DIR = r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\images"
-```
+## ⚖️ Disclaimer
 
-**In `main.py` (backtesting):**
-```python
-backtest = run_backtest(df, signals, initial_capital=100000)
-```
+This backtesting framework is for educational and research purposes only. Past performance does not guarantee future results. Always conduct thorough due diligence and consult with a financial advisor before trading with real capital.
 
-## 📝 Supported Stocks
+## 📜 License
 
-The project currently analyzes these major Indian companies:
-- RELIANCE - Reliance Industries
-- TCS - Tata Consultancy Services
-- INFY - Infosys Limited
-- HDFCBANK - HDFC Bank
-- ICICIBANK - ICICI Bank
-- ITC - ITC Limited
-- SBIN - State Bank of India
-- LT - Larsen & Toubro
-- HINDUNILVR - Hindustan Unilever
-- KOTAKBANK - Kotak Mahindra Bank
+This project is provided as-is for educational use.
 
+---
 
-**Last Updated**: June 4 2026
+**Last Updated**: June 2026  
+**Version**: 2.1
