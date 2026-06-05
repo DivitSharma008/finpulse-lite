@@ -109,7 +109,6 @@ if __name__ == "__main__":
 
         trade_log = build_trade_log(backtest)
 
-        # ✅ FIXED: Now actually prints the metrics instead of just calculating them
         print("\n" + "="*50)
         print(f"PERFORMANCE METRICS FOR {name} using {strategy_name} STRATEGY")
         print("="*50)
