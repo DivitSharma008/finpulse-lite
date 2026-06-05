@@ -5,10 +5,10 @@ Strategy         : RSI STRATEGY
 Stock            : RELIANCE.NS
 Period           : 2021-06-07 -> 2026-06-03
 ________________________________________________
-Total Return     : 29.05%
-Annualized Return: 5.24%
-Sharpe Ratio     : -0.03
-Max Drawdown     : -16.85%
-Win Rate         : 100.00%
-Number of Trades : 6
+Total Return     : 36.40%
+Annualized Return: 6.42%
+Sharpe Ratio     : 0.07
+Max Drawdown     : -19.04%
+Win Rate         : 62.50%
+Number of Trades : 16
 ________________________________________________
