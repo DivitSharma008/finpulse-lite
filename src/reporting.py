@@ -1,4 +1,3 @@
-# ✅ FIXED: Corrected imports - trade_log was not a function, STOCKS is from data_loader
 from .metrics import (
     total_return,
     annualized_return,
@@ -29,7 +28,6 @@ Number of Trades : {stats["num_trades"]}
 ________________________________________________
 """
 
-    # ✅ FIXED: Portable path using os.path.join()
     report_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "reports")
     os.makedirs(report_dir, exist_ok=True)
     path = os.path.join(report_dir, f"{name}_{strategy_name}_report.md")
