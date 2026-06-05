@@ -73,7 +73,6 @@ if __name__ == "__main__":
        
         print("Final Portfolio: ₹", round(backtest["Adjusted Portfolio"].iloc[-1], 2))
 
-        # ✅ FIXED: Removed duplicate line
         df["Buy & Hold"] = df["Close"] * (100000 / df["Close"].iloc[0])
 
         fig, ax = plt.subplots(figsize=(13, 5))
@@ -99,7 +98,6 @@ if __name__ == "__main__":
 
         fig.tight_layout()
 
-        # ✅ FIXED: Portable path using os.path.join()
         images_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "images")
         os.makedirs(images_dir, exist_ok=True)
         fig.savefig(os.path.join(images_dir, f"{name}_backtest.png"))
