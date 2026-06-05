@@ -191,26 +191,5 @@ The project currently analyzes these major Indian companies:
 - HINDUNILVR - Hindustan Unilever
 - KOTAKBANK - Kotak Mahindra Bank
 
-## ⚠️ Disclaimer
 
-This project is for **educational and research purposes only**. It does not constitute financial advice. Past performance does not guarantee future results. Always consult a financial advisor before making investment decisions.
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Report bugs and issues
-- Suggest improvements
-- Add new trading strategies
-- Optimize backtesting engine
-
-## 📄 License
-
-This project is available for personal and educational use.
-
-## 📧 Contact
-
-For questions or suggestions, please reach out to the project maintainer.
-
----
-
-**Last Updated**: June 2026
+**Last Updated**: June 4 2026
