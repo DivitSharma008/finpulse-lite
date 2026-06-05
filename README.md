@@ -249,10 +249,6 @@ STOCKS = {...}  # Supported stock symbols
 
 This backtesting framework is for educational and research purposes only. Past performance does not guarantee future results. Always conduct thorough due diligence and consult with a financial advisor before trading with real capital.
 
-## 📜 License
-
-This project is provided as-is for educational use.
-
 ---
 
 **Last Updated**: June 2026  
