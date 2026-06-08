@@ -14,7 +14,7 @@ def generate_signals(symbol, strategy_name="SMA"):
         raise ValueError(f"Unsupported strategy. Supported: {SUPPORTED_STRATEGIES}")
 
     path = os.path.join(DATA_DIR, f"{name}.csv")
-    # ✅ FIXED: parse_dates already set, removed redundant conversion
+    
     df = pd.read_csv(path, index_col="Date", parse_dates=True)
 
     if len(df) < 200:
