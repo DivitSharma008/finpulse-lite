@@ -29,7 +29,7 @@ def run_backtest(df, signals, initial_capital=100000):
         signal = signals.iloc[i]
         price = df["Price"].iloc[i]
 
-        if signal == 1 and shares <= 1e-10:
+        if signal == 1 and shares <= 1e-8:
             shares = cash / price
 
             adjusted_shares = adjusted_cash / (price * 1.001)
