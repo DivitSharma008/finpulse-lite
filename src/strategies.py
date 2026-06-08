@@ -52,7 +52,7 @@ def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_
     avg_gain = gain.ewm(span = period, adjust=False).mean()
     avg_loss = loss.ewm(span = period, adjust=False).mean()
 
-    RS = avg_gain / avg_loss
+    RS = avg_gain / avg_loss.replace(0,1e-10)
     RSI = 100 - 100 / (1 + RS)
 
     signals = pd.Series(0, index=df.index)
