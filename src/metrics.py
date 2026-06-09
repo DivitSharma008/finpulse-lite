@@ -68,8 +68,8 @@ def trade_statistics(trade_log):
 
     losses = trade_log[trade_log["Profit"] < 0]
 
-    win_rate = len(wins) / len(trade_log)
-
+    win_rate = len(wins) / len(trade_log)   #winrate is calculated only after a sell so no chance of
+                                            #only buy being included
     loss_sum = losses["Profit"].sum()
 
     profit_factor = (wins["Profit"].sum() / abs(loss_sum) if loss_sum != 0 else float("inf"))
@@ -92,12 +92,15 @@ if __name__ == "__main__":
         if name is None:
             raise KeyError(f"Unknown symbol: {symbol}")
 
-        df = pd.read_csv(
-            os.path.join(DATA_DIR, f"{name}.csv"),
-            index_col="Date",
-            parse_dates=True
-        )
+        csv_path = os.path.join(DATA_DIR, f"{name}.csv")
 
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(
+                f"Data file not found: {csv_path}\n"
+                f"Run: python -m data_loader and enter symbol {name}"
+            )
+
+        df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
         if strategy_name == "SMA":
             signals = generate_signals(symbol)
         elif strategy_name == "RSI":

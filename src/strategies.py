@@ -13,10 +13,15 @@ def generate_signals(symbol, strategy_name="SMA"):
     if strategy_name not in SUPPORTED_STRATEGIES:
         raise ValueError(f"Unsupported strategy. Supported: {SUPPORTED_STRATEGIES}")
 
-    path = os.path.join(DATA_DIR, f"{name}.csv")
-    
-    df = pd.read_csv(path, index_col="Date", parse_dates=True)
+    csv_path = os.path.join(DATA_DIR, f"{name}.csv")
 
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(
+            f"Data file not found: {csv_path}\n"
+            f"Run: python -m data_loader and enter symbol {name}"
+        )
+
+    df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
     if len(df) < 200:
         raise ValueError("Not enough data to calculate 200-day SMA.")
 
@@ -59,7 +64,7 @@ def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_
     signals.loc[RSI < oversold] = 1
     signals.loc[RSI > overbought] = -1
     signals = signals.shift(1).fillna(0)
-
+    signals.iloc[:30] = 0  # Ignore unreliable early signals
     print("[✓] RSI Signals generated")
     return signals
 

@@ -29,7 +29,7 @@ def run_backtest(df, signals, initial_capital=100000):
         signal = signals.iloc[i]
         price = df["Price"].iloc[i]
 
-        if signal == 1 and shares <= 1e-8:
+        if signal == 1 and shares <= 1e-8:  #the shares condition forces no buys even after a repeated buy signal
             shares = cash / price
 
             adjusted_shares = adjusted_cash / (price * 1.001)
@@ -64,7 +64,15 @@ if __name__ == "__main__":
     try:
         name = get_stock_name(symbol)
 
-        df = pd.read_csv(os.path.join(DATA_DIR, f"{name}.csv"), index_col="Date", parse_dates=True)
+        csv_path = os.path.join(DATA_DIR, f"{name}.csv")
+
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(
+                f"Data file not found: {csv_path}\n"
+                f"Run: python -m data_loader and enter symbol {name}"
+            )
+
+        df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
         if strategy_name == "SMA":
             signals = generate_signals(symbol)
         elif strategy_name == "RSI":

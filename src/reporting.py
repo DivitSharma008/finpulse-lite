@@ -50,11 +50,15 @@ if __name__ == "__main__":
         if name is None:
             raise KeyError(f"Unknown symbol: {symbol}")
 
-        df = pd.read_csv(
-            os.path.join(DATA_DIR, f"{name}.csv"),
-            index_col="Date",
-            parse_dates=True
-        )
+        csv_path = os.path.join(DATA_DIR, f"{name}.csv")
+
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(
+                f"Data file not found: {csv_path}\n"
+                f"Run: python -m data_loader and enter symbol {name}"
+            )
+
+        df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
 
         if strategy_name == "SMA":
             signals = generate_signals(symbol)

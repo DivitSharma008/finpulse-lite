@@ -34,7 +34,7 @@ def load_data(symbol):
         raise KeyError(f"'{symbol}' not found. Valid symbols: {', '.join(STOCKS.values())}")
 
     ticker = yf.Ticker(symbol)
-    df = ticker.history(start=START, end=END)
+    df = ticker.history(start=START, end=END) #Holidays are not counted in YFinance so skipped on its own
 
     if df.empty:
         raise ValueError(f"No data returned for '{symbol}'")
