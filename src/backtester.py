@@ -24,15 +24,14 @@ def run_backtest(df, signals, initial_capital=100000):
 
     adjusted_cash = float(initial_capital)
     adjusted_shares = 0.0
-
     for i in range(len(df)):
         signal = signals.iloc[i]
         price = df["Price"].iloc[i]
 
         if signal == 1 and shares <= 1e-8:  #the shares condition forces no buys even after a repeated buy signal
             shares = cash / price
-
-            adjusted_shares = adjusted_cash / (price * 1.001)
+            transcation_cost = 0.001
+            adjusted_shares = adjusted_cash / (price * (1+transcation_cost))
 
             cash = 0.0
             adjusted_cash = 0.0
@@ -42,7 +41,7 @@ def run_backtest(df, signals, initial_capital=100000):
         elif signal == -1 and shares > 1e-10:
             cash = shares * price
 
-            adjusted_cash = adjusted_shares * price * 0.999
+            adjusted_cash = adjusted_shares * price *(1-transcation_cost)
 
             shares = 0.0
             adjusted_shares = 0.0
