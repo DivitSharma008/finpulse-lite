@@ -272,7 +272,6 @@ def test_very_small_returns():
 
 
 def test_transaction_costs_applied():
-    """Backtest with transaction costs reduces portfolio value compared to no costs"""
     dates = pd.date_range(start='2020-01-01', periods=252, freq='D')
     
     # Create price data
@@ -299,10 +298,8 @@ def test_transaction_costs_applied():
     
     assert final_adjusted <= final_unadjusted + 1
 
-
-
 def test_empty_dataframe():
-    """Backtester handles empty input gracefully"""
+
     empty_df = pd.DataFrame(columns=['Close', 'Open', 'High', 'Low', 'Volume'])
     empty_signals = pd.Series([], dtype=int)
     
@@ -313,7 +310,7 @@ def test_empty_dataframe():
         assert True
 
 def test_single_stock_backtest():
-    """End-to-end backtest runs without errors on realistic single stock data"""
+
     dates = pd.date_range(start='2020-01-01', periods=252, freq='D')
     
     df = pd.DataFrame({
