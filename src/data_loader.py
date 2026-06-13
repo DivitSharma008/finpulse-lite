@@ -4,19 +4,60 @@ import os
 from datetime import date, timedelta
 
 STOCKS = {
-    "RELIANCE": "RELIANCE.NS",
-    "TCS": "TCS.NS",
-    "INFY": "INFY.NS",
+    "ADANIENSOL": "ADANIENSOL.NS",
+    "ADANIGREEN": "ADANIGREEN.NS",
+    "ADANIPORTS": "ADANIPORTS.NS",
+    "APOLLOHOSP": "APOLLOHOSP.NS",
+    "ASIANPAINT": "ASIANPAINT.NS",
+    "AXISBANK": "AXISBANK.NS",
+    "BAJAJ-AUTO": "BAJAJ-AUTO.NS",
+    "BAJAJFINSV": "BAJAJFINSV.NS",
+    "BAJAJHLDNG": "BAJAJHLDNG.NS",
+    "BHARATIARTL": "BHARATIARTL.NS",
+    "BPCL": "BPCL.NS",
+    "BRITANNIA": "BRITANNIA.NS",
+    "CIPLA": "CIPLA.NS",
+    "COALINDIA": "COALINDIA.NS",
+    "DRREDDY": "DRREDDY.NS",
+    "EICHERMOT": "EICHERMOT.NS",
+    "GAIL": "GAIL.NS",
+    "GRASIM": "GRASIM.NS",
+    "HCLTECH": "HCLTECH.NS",
+    "HDFC": "HDFC.NS",
     "HDFCBANK": "HDFCBANK.NS",
-    "ICICIBANK": "ICICIBANK.NS",
-    "SBIN": "SBIN.NS",
-    "ITC": "ITC.NS",
-    "LT": "LT.NS",
+    "HEROMOTOCO": "HEROMOTOCO.NS",
     "HINDUNILVR": "HINDUNILVR.NS",
+    "HONEYWELL": "HONEYWELL.NS",
+    "ICICIBANK": "ICICIBANK.NS",
+    "INFY": "INFY.NS",
+    "ITC": "ITC.NS",
+    "JSWSTEEL": "JSWSTEEL.NS",
     "KOTAKBANK": "KOTAKBANK.NS",
+    "LT": "LT.NS",
+    "MARUTI": "MARUTI.NS",
+    "NESTLEIND": "NESTLEIND.NS",
+    "NTPC": "NTPC.NS",
+    "ONGC": "ONGC.NS",
+    "POWERGRID": "POWERGRID.NS",
+    "RELIANCE": "RELIANCE.NS",
+    "SBIN": "SBIN.NS",
+    "SBICARD": "SBICARD.NS",
+    "SHREECEM": "SHREECEM.NS",
+    "SUNPHARMA": "SUNPHARMA.NS",
+    "TATAMOTORS": "TATAMOTORS.NS",
+    "TATAPOWER": "TATAPOWER.NS",
+    "TATASTEEL": "TATASTEEL.NS",
+    "TCS": "TCS.NS",
+    "TECHM": "TECHM.NS",
+    "TITAN": "TITAN.NS",
+    "ULTRACEMCO": "ULTRACEMCO.NS",
+    "UPL": "UPL.NS",
+    "WIPRO": "WIPRO.NS",
 }
 
-DATA_DIR = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "data")
+# Portable path: relative to project root
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 
 START = date.today() - timedelta(days=5 * 365)
 END = date.today()
@@ -28,13 +69,13 @@ def get_stock_name(symbol):
     return inverted_dict.get(symbol)
 
 def load_data(symbol):
-    name=get_stock_name(symbol)
+    name = get_stock_name(symbol)
 
     if name is None:
-        raise KeyError(f"'{symbol}' not found. Valid symbols: {', '.join(STOCKS.values())}")
+        raise KeyError(f"'{symbol}' not found. Valid symbols: {', '.join(STOCKS.keys())}")
 
     ticker = yf.Ticker(symbol)
-    df = ticker.history(start=START, end=END) #Holidays are not counted in YFinance so skipped on its own
+    df = ticker.history(start=START, end=END)
 
     if df.empty:
         raise ValueError(f"No data returned for '{symbol}'")

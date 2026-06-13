@@ -27,10 +27,10 @@ Win Rate         : {stats["win_rate"] * 100:.2f}%
 Number of Trades : {stats["num_trades"]}
 ________________________________________________
 """
-
-    report_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "reports")
-    os.makedirs(report_dir, exist_ok=True)
-    path = os.path.join(report_dir, f"{name}_{strategy_name}_report.md")
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+    REPORT_DIR = os.path.join(PROJECT_ROOT, "reports")
+    os.makedirs(REPORT_DIR, exist_ok=True)
+    path = os.path.join(REPORT_DIR, f"{name}_{strategy_name}_report.md")
     with open(path, "w") as f:
         f.write(content)
     print(f"[✓] Report saved: {path}")

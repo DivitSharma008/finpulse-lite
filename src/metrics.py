@@ -74,7 +74,7 @@ def trade_statistics(trade_log):
 
     profit_factor = (wins["Profit"].sum() / abs(loss_sum) if loss_sum != 0 else float("inf"))
 
-    return {"num_trades": len(trade_log), "win_rate": win_rate, "profit_factor": profit_factor}
+    return {"wins":len(wins),"losses":len(losses),"num_trades": len(trade_log), "win_rate": win_rate, "profit_factor": profit_factor}
 
 
 if __name__ == "__main__":

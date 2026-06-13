@@ -4,7 +4,7 @@ from .data_loader import STOCKS, DATA_DIR, get_stock_name
 SUPPORTED_STRATEGIES = ["SMA", "RSI"]
 
 
-def generate_signals(symbol, strategy_name="SMA"):
+def generate_signals(symbol,slow_window,fast_window,strategy_name="SMA"):
     name = get_stock_name(symbol)
 
     if name is None:
@@ -25,19 +25,19 @@ def generate_signals(symbol, strategy_name="SMA"):
     if len(df) < 200:
         raise ValueError("Not enough data to calculate 200-day SMA.")
 
-    sma50 = df["Close"].rolling(50).mean()
-    sma200 = df["Close"].rolling(200).mean()
+    sma_fast = df["Close"].rolling(fast_window).mean()
+    sma_slow = df["Close"].rolling(slow_window).mean()
 
     signals = pd.Series(0, index=df.index)
-    signals.loc[sma50 > sma200] = 1
-    signals.loc[sma50 < sma200] = -1
+    signals.loc[sma_fast > sma_slow] = 1
+    signals.loc[sma_fast < sma_slow] = -1
     signals = signals.shift(1).fillna(0)
 
     print("[✓] SMA Signals generated")
     return signals
 
 
-def generate_rsi_signals(symbol, period=14, oversold=30, overbought=70,strategy_name="RSI"):
+def generate_rsi_signals(symbol, oversold, overbought,period, strategy_name="RSI"):
     name = get_stock_name(symbol)
 
     if name is None:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     strategy_name = input("Enter the strategy to be used: ").strip().upper()
     try:
         if strategy_name == "SMA":
-            signals = generate_signals(symbol)
+            signals = generate_signals(symbol,"SMA",200,50)
         elif strategy_name == "RSI":
             signals = generate_rsi_signals(symbol,14,30,70)
         print(signals.value_counts())

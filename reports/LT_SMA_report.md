@@ -1,12 +1,12 @@
 
 # Backtest Report
 
-Strategy         : SMA Crossover (50/200)
+Strategy         : SMA STRATEGY
 Stock            : LT.NS
-Period           : 2021-06-04 -> 2026-06-02
+Period           : 2021-06-14 -> 2026-06-12
 ________________________________________________
-Total Return     : 73.86%
-Annualized Return: 11.70%
+Total Return     : 74.14%
+Annualized Return: 11.74%
 Sharpe Ratio     : 0.34
 Max Drawdown     : -24.35%
 Win Rate         : 66.67%

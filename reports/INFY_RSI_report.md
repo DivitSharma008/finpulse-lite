@@ -3,12 +3,12 @@
 
 Strategy         : RSI STRATEGY
 Stock            : INFY.NS
-Period           : 2021-06-07 -> 2026-06-03
+Period           : 2021-06-14 -> 2026-06-12
 ________________________________________________
-Total Return     : -2.61%
-Annualized Return: -0.53%
-Sharpe Ratio     : -0.28
-Max Drawdown     : -28.43%
-Win Rate         : 80.00%
-Number of Trades : 5
+Total Return     : -21.44%
+Annualized Return: -4.71%
+Sharpe Ratio     : -0.53
+Max Drawdown     : -35.84%
+Win Rate         : 46.15%
+Number of Trades : 13
 ________________________________________________

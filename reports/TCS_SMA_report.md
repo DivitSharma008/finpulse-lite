@@ -1,14 +1,14 @@
 
 # Backtest Report
 
-Strategy         : SMA Crossover (50/200)
+Strategy         : SMA STRATEGY
 Stock            : TCS.NS
-Period           : 2020-06-02 00:00:00 -> 2026-05-29 00:00:00
+Period           : 2021-06-14 -> 2026-06-12
 ________________________________________________
-Total Return     : 12.51%
-Annualized Return: 1.99%
-Sharpe Ratio     : -0.21
+Total Return     : -7.90%
+Annualized Return: -1.63%
+Sharpe Ratio     : -0.51
 Max Drawdown     : -29.72%
-Win Rate         : 50.00%
+Win Rate         : 25.00%
 Number of Trades : 4
 ________________________________________________
