@@ -55,9 +55,8 @@ STOCKS = {
     "WIPRO": "WIPRO.NS",
 }
 
-# Portable path: relative to project root
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+DATA_DIR = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "data")
+
 
 START = date.today() - timedelta(days=5 * 365)
 END = date.today()
