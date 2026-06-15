@@ -1,54 +1,327 @@
 import streamlit as st
-import streamlit_authenticator as stauth
 import plotly.express as px
 import pandas as pd
 from datetime import date
-from src.data_loader import STOCKS,get_stock_name
-from src.strategies import generate_signals,generate_rsi_signals,SUPPORTED_STRATEGIES
+from src.data_loader import STOCKS, get_stock_name, load_data
+from src.strategies import generate_signals, generate_rsi_signals, SUPPORTED_STRATEGIES
 from src.backtester import run_backtest
-from src.metrics import build_trade_log,trade_statistics
+from src.metrics import build_trade_log, trade_statistics, sharpe_ratio, total_return, max_drawdown, annualized_return
 
+st.set_page_config(page_title="FinPulse", page_icon="📈", layout="wide")
+st.title("📈 FinPulse Backtester")
 
-st.title("My basic app with a title")
-add_selectbox = st.sidebar.selectbox(
-    'Pick the stock symbol!',
-    STOCKS.values()
-)
+# ============================================================================
+# CACHED FUNCTIONS (Load once, reuse)
+# ============================================================================
 
-name = get_stock_name(add_selectbox)
-my_chart = pd.read_csv(fr"C:\Users\DELL\OneDrive\Desktop\finpulse-lite\data\{name}.csv")
+@st.cache_data
+def load_stock_data(symbol):
+    """Cache stock data - loads only once per symbol"""
+    path = load_data(symbol)
+    return pd.read_csv(fr"{path}")
 
-st.header("Strategy")
-strategy_name = st.selectbox("Choose strategy(SMA Crossover/RSI):",SUPPORTED_STRATEGIES)
-if strategy_name == "SMA":
-    slow_window = st.slider("SMA Slow Window",min_value=5,max_value=5*365)
-    fast_window = st.slider("SMA Fast Window",min_value=1,max_value=slow_window)
-    my_signals = generate_signals(add_selectbox,slow_window,fast_window)
-elif strategy_name == "RSI":
-    period = st.slider("RSI Period",min_value=5,max_value=5*365)
-    oversold = st.slider("Oversold",min_value=1,max_value=99)
-    overbought = st.slider("Overbought",min_value=oversold,max_value=99)
-    my_signals = generate_rsi_signals(add_selectbox,oversold,overbought,period)
+@st.cache_data
+def get_sma_signals(symbol, slow_window, fast_window):
+    """Cache SMA signals - calculates only once per params"""
+    return generate_signals(symbol, slow_window, fast_window)
 
-st.subheader("Daily Close Price")
-st.line_chart(my_chart,x="Date",y="Close")
+@st.cache_data
+def get_rsi_signals(symbol, period, oversold, overbought):
+    """Cache RSI signals - calculates only once per params"""
+    return generate_rsi_signals(symbol, oversold, overbought, period)
 
-if st.checkbox("Run backtester"):
-    st.subheader("Backtest")
-    backtest = run_backtest(my_chart,my_signals)
-    backtest["Buy & Hold"] = backtest["Close"] * (100000 / backtest["Close"].iloc[0])
-    tab1,tab2 = st.tabs(["Strategy Performance","Strategy vs Buy & Hold"])
-    with tab1:
-        fig = px.line(backtest,x="Date",y="Adjusted Portfolio",labels={"value":"Portfolio Value"})
-        st.plotly_chart(fig)
+@st.cache_data
+def run_cached_backtest(symbol, strategy, slow_window=200, fast_window=50, period=14, oversold=30, overbought=70):
+    """Cache backtest results - runs only once per params"""
+    my_chart = load_stock_data(symbol)
+    
+    if strategy == "SMA":
+        signals = get_sma_signals(symbol, slow_window, fast_window)
+    else:  # RSI
+        signals = get_rsi_signals(symbol, period, oversold, overbought)
+    
+    return run_backtest(my_chart, signals)
+
+# ============================================================================
+# Initialize session state
+# ============================================================================
+
+if "backtest_results" not in st.session_state:
+    st.session_state.backtest_results = []
+
+Home, LeaderBoard = st.tabs(["Home", "LeaderBoard"])
+
+# ============================================================================
+# HOME TAB
+# ============================================================================
+
+with Home:
+    col1, col2 = st.columns([2, 3])
+    
+    with col1:
+        symbol = st.sidebar.selectbox('Pick the stock symbol!', STOCKS.values())
+        name = get_stock_name(symbol)
+    
+    with col2:
+        st.write("")
+    
+    # Load data (cached)
+    my_chart = load_stock_data(symbol)
+    
+    st.subheader("Daily Close Price")
+    st.line_chart(my_chart, x="Date", y="Close")
+    
+    st.divider()
+    
+    st.header("Strategy")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        strategy_name = st.selectbox("Choose strategy:", SUPPORTED_STRATEGIES)
+    
+    with col2:
+        st.write("")
+    
+    if strategy_name == "SMA":
+        col1, col2 = st.columns(2)
+        with col1:
+            slow_window = st.slider("SMA Slow Window", min_value=5, max_value=5*365, value=200)
+        with col2:
+            fast_window = st.slider("SMA Fast Window", min_value=1, max_value=slow_window, value=50)
+        
+    elif strategy_name == "RSI":
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            period = st.slider("RSI Period", min_value=5, max_value=100, value=14)
+        with col2:
+            oversold = st.slider("Oversold", min_value=1, max_value=50, value=30)
+        with col3:
+            overbought = st.slider("Overbought", min_value=oversold, max_value=99, value=70)
+    
+    st.divider()
+    
+    if st.checkbox("Run backtester", value=False):
+        st.subheader("Backtest Results")
+        
+        # Use cached backtest
+        if strategy_name == "SMA":
+            backtest = run_cached_backtest(symbol, "SMA", slow_window, fast_window)
+        else:
+            backtest = run_cached_backtest(symbol, "RSI", period=period, oversold=oversold, overbought=overbought)
+        
+        backtest["Buy & Hold"] = backtest["Close"] * (100000 / backtest["Close"].iloc[0])
+        
+        # Calculate metrics
+        equity_curve = pd.Series(
+            backtest["Adjusted Portfolio"].values,
+            index=pd.to_datetime(backtest.index)
+        )
         trade_log = build_trade_log(backtest)
         stats = trade_statistics(trade_log)
+        
+        metrics = {
+            "sharpe_ratio": sharpe_ratio(equity_curve),
+            "total_return": total_return(equity_curve),
+            "annualized_return": annualized_return(equity_curve),
+            "max_drawdown": max_drawdown(equity_curve),
+            "num_trades": stats["num_trades"],
+            "win_rate": stats["win_rate"],
+            "profit_factor": stats.get("profit_factor", 0)
+        }
+        
+        # Store in session
+        st.session_state.backtest_results = [
+            r for r in st.session_state.backtest_results
+            if not (
+                r["Stock"] == name and
+                r["Strategy"] == strategy_name
+            )
+        ]
 
-        st.subheader("Some metrics")
-        st.table(data=stats)
+        st.session_state.backtest_results.append({
+            "Stock": name,
+            "Strategy": strategy_name,
+            **metrics
+        })
+        
+        tab1, tab2 = st.tabs(["Strategy Performance", "Strategy vs Buy & Hold"])
+        
+        with tab1:
+            fig = px.line(backtest, x="Date", y="Adjusted Portfolio", 
+                         labels={"value": "Portfolio Value"},
+                         title=f"{name} - {strategy_name} Strategy")
+            st.plotly_chart(fig, use_container_width=True)
+            
+            st.divider()
+            
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Sharpe Ratio", f"{metrics['sharpe_ratio']:.2f}")
+            with col2:
+                st.metric("Total Return", f"{metrics['total_return']*100:.2f}%")
+            with col3:
+                st.metric("Max Drawdown", f"{metrics['max_drawdown']*100:.2f}%")
+            with col4:
+                st.metric("Annualized Return", f"{metrics['annualized_return']*100:.2f}%")
+            
+            st.divider()
+            
+            st.subheader("Trade Statistics")
+            st.table(stats)
 
-    with tab2:
-        fig = px.line(backtest,x="Date",y=["Adjusted Portfolio","Buy & Hold"],labels={"value":"Portfolio Value","variable":"Legend"})
-        st.plotly_chart(fig)
+        with tab2:
+            fig = px.line(backtest, x="Date", y=["Adjusted Portfolio", "Buy & Hold"],
+                         labels={"value": "Portfolio Value", "variable": "Strategy"},
+                         title=f"{name} - Strategy vs Buy & Hold")
+            st.plotly_chart(fig, use_container_width=True)
+
+# ============================================================================
+# LEADERBOARD TAB
+# ============================================================================
+
+with LeaderBoard:
+    st.subheader("🏆 Leaderboard")
     
+    # Button to run all backtests
+    col1, col2 = st.columns([1, 4])
     
+    with col1:
+        if st.button("▶️ Run All Backtests", use_container_width=True):
+            st.info("⚡ Running backtests for all 50 stocks (using cached data)...")
+            
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            total_stocks = len(STOCKS)
+            
+            for idx, (stock_name, symbol) in enumerate(STOCKS.items()):
+                for strategy in ["SMA", "RSI"]:
+                    try:
+                        # Use cached backtest (much faster on second run)
+                        if strategy == "SMA":
+                            backtest = run_cached_backtest(symbol, "SMA", 200, 50)
+                        else:
+                            backtest = run_cached_backtest(symbol, "RSI", period=14, oversold=30, overbought=70)
+                        
+                        # Calculate metrics
+                        equity_curve = pd.Series(
+                            backtest["Adjusted Portfolio"].values,
+                            index=pd.to_datetime(backtest.index)
+                        )
+                        trade_log = build_trade_log(backtest)
+                        stats = trade_statistics(trade_log)
+                        
+                        metrics = {
+                            "sharpe_ratio": sharpe_ratio(equity_curve),
+                            "total_return": total_return(equity_curve),
+                            "annualized_return": annualized_return(equity_curve),
+                            "max_drawdown": max_drawdown(equity_curve),
+                            "num_trades": stats["num_trades"],
+                            "win_rate": stats["win_rate"],
+                            "profit_factor": stats.get("profit_factor", 0)
+                        }
+                        
+                        # Store in session
+                        st.session_state.backtest_results = [
+                            r for r in st.session_state.backtest_results
+                            if not (
+                                r["Stock"] == name and
+                                r["Strategy"] == strategy_name
+                            )
+                        ]
+
+                        st.session_state.backtest_results.append({
+                            "Stock": name,
+                            "Strategy": strategy_name,
+                            **metrics
+                        })
+                        
+                        # Update progress
+                        progress = (idx * 2 + (1 if strategy == "RSI" else 0)) / (total_stocks * 2)
+                        progress_bar.progress(progress)
+                        status_text.text(f"✓ {stock_name} ({strategy})")
+                        
+                    except Exception as e:
+                        status_text.text(f"❌ Error with {stock_name} ({strategy})")
+                        continue
+            
+            progress_bar.progress(1.0)
+            st.success("✅ All backtests completed! (Results cached for future runs)")
+    
+    with col2:
+        st.write("")
+    
+    st.divider()
+    
+    # Display results
+    if not st.session_state.backtest_results:
+        st.info("📊 Click 'Run All Backtests' to populate the leaderboard!")
+    else:
+        # Convert to dataframe
+        results_df = pd.DataFrame(st.session_state.backtest_results)
+        
+        st.divider()
+        
+        # Filter by strategy
+        strategy_filter = st.radio("Filter by Strategy:", ["All"] + list(SUPPORTED_STRATEGIES), horizontal=True)
+        
+        if strategy_filter == "All":
+            display_df = results_df
+        else:
+            display_df = results_df[results_df["Strategy"] == strategy_filter]
+        
+        if display_df.empty:
+            st.info(f"No {strategy_filter} backtests yet!")
+        else:
+            # Sort by sharpe ratio
+            display_df = display_df.sort_values("sharpe_ratio", ascending=False).reset_index(drop=True)
+            display_df.insert(0, "Rank", range(1, len(display_df) + 1))
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.write("**📈 Top 10 Performers**")
+                top_10 = display_df.head(10)[["Rank", "Stock", "Strategy", "sharpe_ratio", "total_return", "num_trades"]]
+                top_10_display = top_10.copy()
+                top_10_display.columns = ["Rank", "Stock", "Strategy", "Sharpe", "Return %", "Trades"]
+                top_10_display["Return %"] = (top_10_display["Return %"] * 100).round(2)
+                top_10_display["Sharpe"] = top_10_display["Sharpe"].round(2)
+                st.dataframe(top_10_display, use_container_width=True, hide_index=True)
+            
+            with col2:
+                st.write("**📉 Bottom 10 Performers**")
+                bottom_10 = display_df.tail(10)[["Rank", "Stock", "Strategy", "sharpe_ratio", "total_return", "num_trades"]]
+                bottom_10_display = bottom_10.copy()
+                bottom_10_display.columns = ["Rank", "Stock", "Strategy", "Sharpe", "Return %", "Trades"]
+                bottom_10_display["Return %"] = (bottom_10_display["Return %"] * 100).round(2)
+                bottom_10_display["Sharpe"] = bottom_10_display["Sharpe"].round(2)
+                st.dataframe(bottom_10_display, use_container_width=True, hide_index=True)
+            
+            st.divider()
+            
+            # Summary stats
+            st.subheader("📊 Summary Statistics")
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            with col1:
+                st.metric("Total Backtests", len(display_df))
+            with col2:
+                st.metric("Avg Sharpe", f"{display_df['sharpe_ratio'].mean():.2f}")
+            with col3:
+                st.metric("Avg Return", f"{display_df['total_return'].mean()*100:.2f}%")
+            with col4:
+                st.metric("Best Sharpe", f"{display_df['sharpe_ratio'].max():.2f}")
+            with col5:
+                st.metric("Best Return", f"{display_df['total_return'].max()*100:.2f}%")
+            
+            st.divider()
+            
+            # Download button
+            csv = display_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Leaderboard (CSV)",
+                data=csv,
+                file_name=f"leaderboard_{strategy_filter}_{date.today()}.csv",
+                mime="text/csv"
+            )
