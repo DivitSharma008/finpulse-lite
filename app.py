@@ -261,7 +261,7 @@ with LeaderBoard:
         # Convert to dataframe
         results_df = pd.DataFrame(st.session_state.backtest_results)
         
-        st.divider()
+        
         
         # Filter by strategy
         strategy_filter = st.radio("Filter by Strategy:", ["All"] + list(SUPPORTED_STRATEGIES), horizontal=True)
@@ -270,9 +270,10 @@ with LeaderBoard:
             display_df = results_df
         else:
             display_df = results_df[results_df["Strategy"] == strategy_filter]
-        
+        st.divider()
         if display_df.empty:
             st.info(f"No {strategy_filter} backtests yet!")
+        
         else:
             # Sort by sharpe ratio
             display_df = display_df.sort_values("sharpe_ratio", ascending=False).reset_index(drop=True)
