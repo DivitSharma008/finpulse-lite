@@ -8,6 +8,8 @@ def total_return(equity_curve):
 
 def annualized_return(equity_curve):
     years = (equity_curve.index[-1] - equity_curve.index[0]).days / 365
+    if years == 0:
+        return 0
     return (equity_curve.iloc[-1] / equity_curve.iloc[0]) ** (1 / years) - 1
 
 def max_drawdown(equity_curve):
