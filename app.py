@@ -222,18 +222,18 @@ with LeaderBoard:
                             "profit_factor": stats.get("profit_factor", 0)
                         }
                         
-                        # Store in session
+                        # Store in session (FIX: use stock_name and strategy instead of undefined name and strategy_name)
                         st.session_state.backtest_results = [
                             r for r in st.session_state.backtest_results
                             if not (
-                                r["Stock"] == name and
-                                r["Strategy"] == strategy_name
+                                r["Stock"] == stock_name and
+                                r["Strategy"] == strategy
                             )
                         ]
 
                         st.session_state.backtest_results.append({
-                            "Stock": name,
-                            "Strategy": strategy_name,
+                            "Stock": stock_name,
+                            "Strategy": strategy,
                             **metrics
                         })
                         
