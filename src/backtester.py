@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 from .strategies import generate_signals,generate_rsi_signals
-from .data_loader import DATA_DIR, STOCKS, get_stock_name
+from .data_loader import DATA_DIR, STOCKS, get_stock_name,BASE_DIR
 
 
 def run_backtest(df, signals, initial_capital=100000):
@@ -105,9 +105,10 @@ if __name__ == "__main__":
 
         fig.tight_layout()
 
-        images_dir = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "images")
-        os.makedirs(images_dir, exist_ok=True)
-        fig.savefig(os.path.join(images_dir, f"{name}_backtest.png"))
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        IMG_DIR = os.path.join(BASE_DIR, "images")
+        os.makedirs(IMG_DIR, exist_ok=True)
+        fig.savefig(os.path.join(IMG_DIR, f"{name}_backtest.png"))
 
         plt.show()
 
