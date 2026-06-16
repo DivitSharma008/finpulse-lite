@@ -1,9 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+try:
+    from .strategies import generate_signals,generate_rsi_signals
+    from .data_loader import DATA_DIR, STOCKS, get_stock_name,BASE_DIR
+except ImportError:
+    from strategies import generate_signals,generate_rsi_signals
+    from data_loader import DATA_DIR, STOCKS, get_stock_name,BASE_DIR
 
-from .strategies import generate_signals,generate_rsi_signals
-from .data_loader import DATA_DIR, STOCKS, get_stock_name,BASE_DIR
 
 
 def run_backtest(df, signals, initial_capital=100000):
@@ -73,11 +77,11 @@ if __name__ == "__main__":
 
         df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
         if strategy_name == "SMA":
-            signals = generate_signals(symbol)
+            signals = generate_signals(symbol,200,50)
         elif strategy_name == "RSI":
             signals = generate_rsi_signals(symbol,14,30,70)
         backtest = run_backtest(df, signals)
-       
+        print(backtest)
         print("Final Portfolio: ₹", round(backtest["Adjusted Portfolio"].iloc[-1], 2))
 
         df["Buy & Hold"] = df["Close"] * (100000 / df["Close"].iloc[0])

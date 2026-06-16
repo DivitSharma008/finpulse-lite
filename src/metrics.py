@@ -1,7 +1,10 @@
 import os
 import numpy as np
 import pandas as pd
-from .data_loader import STOCKS,get_stock_name
+try:
+    from .data_loader import STOCKS,get_stock_name
+except ImportError:
+    from data_loader import STOCKS,get_stock_name
 
 def total_return(equity_curve):
     return equity_curve.iloc[-1] / equity_curve.iloc[0] - 1
@@ -80,11 +83,16 @@ def trade_statistics(trade_log):
 
 
 if __name__ == "__main__":
-
-    import pandas as pd
-    from .strategies import generate_signals,generate_rsi_signals
-    from .backtester import run_backtest
-    from .data_loader import DATA_DIR
+    try:
+        import pandas as pd
+        from .strategies import generate_signals,generate_rsi_signals
+        from .backtester import run_backtest
+        from .data_loader import DATA_DIR
+    except ImportError:
+        import pandas as pd
+        from strategies import generate_signals,generate_rsi_signals
+        from backtester import run_backtest
+        from data_loader import DATA_DIR
 
     try:
         symbol = input("Enter symbol: ").strip().upper()

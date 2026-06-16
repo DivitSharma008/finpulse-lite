@@ -182,6 +182,22 @@ with Home:
 
 with LeaderBoard:
     st.subheader("🏆 Leaderboard")
+
+    st.write("**Strategy Parameters**")
+    col_sma1, col_sma2, col_rsi1, col_rsi2, col_rsi3 = st.columns(5)
+
+    with col_sma1:
+        lb_slow_window = st.slider("SMA Slow Window", min_value=5, max_value=300, value=200, key="lb_slow")
+    with col_sma2:
+        lb_fast_window = st.slider("SMA Fast Window", min_value=5, max_value=lb_slow_window//2, value=50, key="lb_fast")
+    with col_rsi1:
+        lb_period = st.slider("RSI Period", min_value=5, max_value=50, value=14, key="lb_period")
+    with col_rsi2:
+        lb_oversold = st.slider("Oversold", min_value=10, max_value=40, value=30, key="lb_oversold")
+    with col_rsi3:
+        lb_overbought = st.slider("Overbought", min_value=60, max_value=90, value=70, key="lb_overbought")
+
+    st.divider()
     
     # Button to run all backtests
     col1, col2 = st.columns([1, 4])
@@ -200,9 +216,9 @@ with LeaderBoard:
                     try:
                         # Use cached backtest (much faster on second run)
                         if strategy == "SMA":
-                            backtest = run_cached_backtest(symbol, "SMA", 200, 50)
+                            backtest = run_cached_backtest(symbol, "SMA", lb_slow_window, lb_fast_window)
                         else:
-                            backtest = run_cached_backtest(symbol, "RSI", period=14, oversold=30, overbought=70)
+                            backtest = run_cached_backtest(symbol, "RSI", period=lb_period, oversold=lb_oversold, overbought=lb_overbought)
                         
                         # Calculate metrics
                         equity_curve = pd.Series(

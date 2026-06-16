@@ -1,6 +1,9 @@
 import pandas as pd
 import os
-from .data_loader import STOCKS, DATA_DIR, get_stock_name
+try:
+    from .data_loader import STOCKS, DATA_DIR, get_stock_name
+except:
+    from data_loader import STOCKS,DATA_DIR,get_stock_name
 SUPPORTED_STRATEGIES = ["SMA", "RSI"]
 
 
