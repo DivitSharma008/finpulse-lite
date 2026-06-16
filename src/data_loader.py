@@ -54,8 +54,9 @@ STOCKS = {
     "UPL": "UPL.NS",
     "WIPRO": "WIPRO.NS",
 }
-
-DATA_DIR = os.path.join(r"C:\Users\DELL\OneDrive\Desktop\finpulse-lite", "data")
+# Replace the hardcoded line with:
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 START = date.today() - timedelta(days=5 * 365)
