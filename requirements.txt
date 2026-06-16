@@ -1,6 +1,6 @@
-import yfinance
-import pandas
-import numpy
-import matplotlib
-import plotly
-import streamlit
+yfinance>=0.2.0
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+plotly>=5.15.0
+streamlit>=1.30.0
