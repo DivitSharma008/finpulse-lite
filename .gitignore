@@ -6,3 +6,5 @@ venv/
 .vscode
 data/
 images/
+reports/
+tests/
