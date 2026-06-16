@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
         df = pd.read_csv(csv_path, index_col="Date", parse_dates=True)
         if strategy_name == "SMA":
-            signals = generate_signals(symbol)
+            signals = generate_signals(symbol,200,50)
         elif strategy_name == "RSI":
             signals = generate_rsi_signals(symbol,14,30,70)
 
