@@ -1,6 +1,6 @@
 # 📈 FinPulse: Algorithmic Trading Backtester
 
-A Python-based backtesting framework for evaluating technical trading strategies on Indian stock market data (NSE). FinPulse supports multiple trading strategies, automated performance metrics calculation, and comprehensive reporting.
+A Python-based backtesting framework for evaluating technical trading strategies on Indian stock market data (NSE). FinPulse supports multiple trading strategies with both a CLI and interactive Streamlit web interface for analysis and visualization.
 
 ## 🎯 Overview
 
@@ -11,24 +11,32 @@ FinPulse enables traders and analysts to:
 - Calculate performance metrics (Sharpe ratio, drawdown, returns)
 - Generate detailed trade logs and reports
 - Compare strategy performance with buy-and-hold benchmark
+- **Run interactive backtests via Streamlit web dashboard**
+- **Compare multiple stocks and strategies simultaneously with leaderboard**
 
 ## 📁 Project Structure
 
 ```
 finpulse-lite/
-├── data_loader.py          # Stock data fetching and management
-├── strategies.py           # Technical analysis strategy implementations
-├── backtester.py           # Backtesting engine
-├── metrics.py              # Performance calculation utilities
-├── reporting.py            # Report generation
+├── app.py                  # Streamlit web interface (interactive dashboard)
+├── main.py                 # CLI entry point for batch processing
+├── plot_stock.py           # Stock price visualization utility
+├── requirements.txt        # Python dependencies
+├── src/
+│   ├── data_loader.py      # Stock data fetching and management
+│   ├── strategies.py       # Technical analysis strategy implementations
+│   ├── backtester.py       # Backtesting engine
+│   ├── metrics.py          # Performance calculation utilities
+│   └── reporting.py        # Report generation
 ├── data/                   # Historical stock data (CSV files)
-├── images/                 # Equity curve charts
-└── reports/                # Generated markdown reports
+├── reports/                # Generated markdown reports
+├── tests/                  # Unit tests
+└── notes/                  # Development notes
 ```
 
 ## 🏆 Supported Stocks
 
-The framework supports 10 major Indian blue-chip stocks:
+The framework supports multiple Indian blue-chip stocks:
 - RELIANCE (Reliance Industries)
 - TCS (Tata Consultancy Services)
 - INFY (Infosys)
@@ -39,6 +47,7 @@ The framework supports 10 major Indian blue-chip stocks:
 - LT (Larsen & Toubro)
 - HINDUNILVR (Hindustan Unilever)
 - KOTAKBANK (Kotak Mahindra Bank)
+- And more...
 
 ## 📊 Supported Strategies
 
@@ -47,12 +56,13 @@ Crossover strategy using 50-day and 200-day moving averages:
 - **Buy Signal**: When 50-day SMA crosses above 200-day SMA
 - **Sell Signal**: When 50-day SMA crosses below 200-day SMA
 - **Minimum Data Required**: 200 days
+- **Customizable**: Adjust fast/slow windows via UI
 
 ### 2. RSI (Relative Strength Index)
 Momentum-based strategy using the 14-period RSI:
 - **Buy Signal**: RSI < 30 (oversold condition)
 - **Sell Signal**: RSI > 70 (overbought condition)
-- **Parameters**: Period=14, Oversold=30, Overbought=70
+- **Parameters**: Period, Oversold, Overbought thresholds (all adjustable)
 
 ## 🚀 Installation
 
@@ -62,90 +72,88 @@ Momentum-based strategy using the 14-period RSI:
 - numpy
 - yfinance
 - matplotlib
+- plotly
+- streamlit
 
 ### Setup
 
 ```bash
 # Clone or download the project
+git clone https://github.com/DivitSharma008/finpulse-lite.git
 cd finpulse-lite
 
-# Install dependencies
-pip install pandas numpy yfinance matplotlib
-
-# (Optional) Create a virtual environment
+# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ## 💡 Usage
 
-### 1. Download Stock Data
+### Option 1: Interactive Web Dashboard (Recommended)
 
 ```bash
-python data_loader.py
-# Enter symbol: TCS.NS
-# Output: [✓] TCS - 1260 rows saved
+streamlit run app.py
 ```
 
-### 2. Generate Trading Signals
+**Features:**
+- Real-time strategy parameter tuning
+- Interactive equity curve charts
+- Strategy vs Buy & Hold comparison
+- Leaderboard showing performance across all stocks
+- Export results to CSV
+
+**Interface:**
+- **Home Tab**: Single stock analysis with customizable strategies
+- **LeaderBoard Tab**: Run all backtests and compare performance
+
+### Option 2: CLI Mode
 
 ```bash
-python strategies.py
-# Enter symbol: TCS.NS
-# Enter the strategy to be used: SMA
-# [✓] SMA Signals generated
-```
-
-### 3. Run Backtest
-
-```bash
-python backtester.py
-# Enter symbol: TCS.NS
-# Enter the strategy to be used: SMA
-# [✓] Backtest completed
-# Final Portfolio: ₹ 156,234.50
-```
-
-Generates:
-- Equity curve visualization comparing strategy vs buy-and-hold
-- Portfolio performance data with transaction details
-
-### 4. Calculate Performance Metrics
-
-```bash
-python metrics.py
-# Enter symbol: TCS.NS
+python main.py
+# Enter symbol: TCS
 # Enter the strategy to be used: SMA
 ```
 
 **Output includes:**
-- Total Return
-- Annualized Return
-- Sharpe Ratio (risk-adjusted returns)
-- Maximum Drawdown
-- Win Rate
-- Profit Factor
+- Generated markdown reports
+- Performance metrics
 - Detailed trade log
 
-### 5. Generate Report
+### Example Workflow
 
+**Step 1: Launch Dashboard**
 ```bash
-python reporting.py
-# Enter symbol: TCS.NS
-# Enter the strategy to be used: SMA
-# [✓] Report saved: reports/TCS_SMA_report.md
+streamlit run app.py
 ```
 
-Generates a markdown report with all key metrics and period details.
+**Step 2: Select Stock**
+- Choose from dropdown list of supported stocks
+
+**Step 3: Configure Strategy**
+- Select strategy (SMA or RSI)
+- Adjust parameters (window sizes, thresholds)
+
+**Step 4: Run Backtest**
+- View equity curve
+- Compare against buy-and-hold
+- Analyze trade statistics
+
+**Step 5: Compare Performance**
+- Navigate to LeaderBoard
+- Run all backtests for comparison
+- Filter by strategy
+- Export results
 
 ## 📊 Key Metrics Explained
 
 | Metric | Description | Interpretation |
 |--------|-------------|-----------------|
+| **Sharpe Ratio** | Risk-adjusted return (default risk-free rate: 6.5%) | Higher is better (>1 is good) |
 | **Total Return** | Overall profit/loss percentage | Higher is better |
 | **Annualized Return** | Yearly average return | Higher is better |
-| **Sharpe Ratio** | Risk-adjusted return (default risk-free rate: 6.5%) | Higher is better (>1 is good) |
 | **Max Drawdown** | Largest peak-to-trough decline | Closer to 0% is better |
 | **Win Rate** | Percentage of profitable trades | Higher is better (>50% is good) |
 | **Profit Factor** | Ratio of gross profit to gross loss | Higher is better (>1 is profitable) |
@@ -161,7 +169,6 @@ Generates a markdown report with all key metrics and period details.
 
 ### Generated Data
 - `data/` - CSV files with OHLCV data
-- `images/` - Equity curve charts (PNG)
 - `reports/` - Performance reports (Markdown)
 
 ### Example Report Output
@@ -169,7 +176,7 @@ Generates a markdown report with all key metrics and period details.
 # Backtest Report
 
 Strategy         : SMA STRATEGY
-Stock            : TCS.NS
+Stock            : TCS
 Period           : 2021-06-05 -> 2026-06-05
 ________________________________________________
 Total Return     : 145.32%
@@ -187,7 +194,7 @@ ________________________________________________
 Data Flow:
   Yahoo Finance
        ↓
-  data_loader.py → CSV files
+  data_loader.py → CSV files (cached)
        ↓
   strategies.py → Trading signals
        ↓
@@ -196,7 +203,26 @@ Data Flow:
   metrics.py ← ← ← → reporting.py
        ↓
   Performance metrics & reports
+       ↓
+   (Web UI via Streamlit or CLI)
 ```
+
+## 🎯 Streamlit Features
+
+### Home Tab
+- Select and visualize individual stock prices
+- Choose strategy and customize parameters in real-time
+- Run single backtests with detailed results
+- View equity curves and trade statistics
+- Compare strategy performance vs buy-and-hold
+
+### LeaderBoard Tab
+- **Run All Backtests**: Execute all 50+ stocks × 2 strategies
+- **Leaderboard Display**: Ranked by Sharpe ratio
+- **Top/Bottom Performers**: See best and worst performing strategies
+- **Summary Statistics**: Aggregate metrics across all backtests
+- **Export Results**: Download leaderboard as CSV
+- **Caching**: Subsequent runs are much faster due to cached data
 
 ## ⚠️ Limitations & Assumptions
 
@@ -209,7 +235,7 @@ Data Flow:
 
 ## ⚙️ Configuration
 
-Edit these variables in `data_loader.py` to customize:
+Edit these variables in `src/data_loader.py` to customize:
 
 ```python
 DATA_DIR = "./data"  # Data storage location (cross-platform)
@@ -226,11 +252,13 @@ STOCKS = {...}  # Supported stock symbols
 | `Not enough data to calculate 200-day SMA` | Download more historical data |
 | `KeyError: Unknown symbol` | Check if symbol is in STOCKS dictionary |
 | `Network error fetching data` | Check internet connection and yfinance status |
+| `Streamlit cache not updating` | Clear cache: `streamlit cache clear` |
 
 ## ⚡ Performance Tips
 
 - Use RSI strategy for faster backtests (fewer days required)
-- Cache downloaded data to avoid repeated API calls
+- Streamlit caches results - subsequent runs are very fast
+- LeaderBoard runs all backtests efficiently with progress tracking
 - Run backtests on multiple strategies to find optimal parameters
 - Test on different time periods to validate robustness
 
@@ -242,14 +270,19 @@ STOCKS = {...}  # Supported stock symbols
 - [ ] Additional technical indicators (MACD, Bollinger Bands)
 - [ ] Risk management (stop-loss, position sizing)
 - [ ] Real-time trading integration
-- [ ] Web dashboard for visualization
+- [ ] Advanced portfolio analysis charts
 - [ ] Machine learning strategy generation
+- [ ] Export to TradingView
 
 ## ⚖️ Disclaimer
 
-This backtesting framework is for educational and research purposes only. Past performance does not guarantee future results. Always conduct thorough due diligence and consult with a financial advisor before trading with real capital.
+This backtesting framework is for educational and research purposes only. Past performance does not guarantee future results. Always conduct thorough due diligence and consult with a financial advisor before trading. The authors assume no responsibility for trading decisions made using this software.
+
+## 📝 License
+
+This project is open-source. Feel free to use, modify, and distribute as needed.
 
 ---
 
 **Last Updated**: June 2026  
-**Version**: 2.1
+**Version**: 2.2
