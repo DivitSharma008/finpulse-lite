@@ -291,5 +291,5 @@ Disclaimer: This framework is for educational and research purposes only. Past p
 
 ---
 
-**Last Updated**: June 2026
+**Last Updated**: June 16 2026
 **Version**: 2.2
