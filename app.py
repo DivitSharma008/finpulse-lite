@@ -300,7 +300,7 @@ with LeaderBoard:
                             "profit_factor": stats.get("profit_factor", 0),
                         }
 
-                        # Store in session (FIX: use stock_name and strategy instead of undefined name and strategy_name)
+                        
                         st.session_state.backtest_results = [
                             r
                             for r in st.session_state.backtest_results
